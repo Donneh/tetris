@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace TetrisClient
 {
@@ -20,23 +22,40 @@ namespace TetrisClient
     /// </summary>
     public partial class MainWindow : Window
     {
+        private TetrisEngine engine;
+        private DispatcherTimer timer;
+        
         public MainWindow()
         {
-            InitializeComponent();
-
-            Matrix matrix = new Matrix(new int[,]
-                {
-                    { 0, 0, 1 },
-                    { 1, 1, 1 },
-                    { 0, 0, 0 },
-                }
-            );
-            matrix = matrix.Rotate90();
+            InitializeComponent();          
+            engine= new TetrisEngine();
+            timer = new DispatcherTimer();
             
-            int offsetY = 0;
-            int offsetX = 0;
+            StartGameLoop();
+        }
 
-            int[,] values = matrix.Value;
+        void StartGameLoop()
+        {
+            var timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(GameTick);
+            timer.Interval = new TimeSpan(0, 0, engine.dropSpeedInSeconds);
+            timer.Start();
+        }
+
+        private void GameTick(object sender, EventArgs e)
+        {
+            MoveDown();
+            Draw();
+        }
+
+        private void MoveDown()
+        {
+            engine.currentTetromino.Position.Y++;
+        }
+
+        void Draw()
+        {
+            int[,] values = engine.currentTetromino.Shape.Value;
             for (int i = 0; i < values.GetLength(0); i++)
             {
                 for (int j = 0; j < values.GetLength(1); j++)
@@ -45,18 +64,11 @@ namespace TetrisClient
                     // dan hoeft die niet getekent te worden:
                     if (values[i, j] != 1) continue;
 
-                    Rectangle rectangle = new Rectangle()
-                    {
-                        Width = 25, // Breedte van een 'cell' in de Grid
-                        Height = 25, // Hoogte van een 'cell' in de Grid
-                        Stroke = Brushes.White, // De rand
-                        StrokeThickness = 1, // Dikte van de rand
-                        Fill = Brushes.Red, // Achtergrondkleur
-                    };
+                    var rectangle = engine.currentTetromino.ToRectangle();
 
                     TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
-                    Grid.SetRow(rectangle, i + offsetY); // Zet de rij
-                    Grid.SetColumn(rectangle, j + offsetX); // Zet de kolom
+                    Grid.SetRow(rectangle, (int)(i + engine.currentTetromino.Position.Y)); // Zet de rij
+                    Grid.SetColumn(rectangle, (int)(j + engine.currentTetromino.Position.X)); // Zet de kolom
                 }
             }
         }

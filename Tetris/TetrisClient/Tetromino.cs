@@ -20,7 +20,7 @@ namespace TetrisClient
                 Height = 25, // Hoogte van een 'cell' in de Grid
                 Stroke = Brushes.White, // De rand
                 StrokeThickness = 1, // Dikte van de rand
-                Fill = Brushes.Red, // Achtergrondkleur
+                Fill = Color, // Achtergrondkleur
             };
         }
     }

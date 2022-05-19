@@ -44,6 +44,7 @@ namespace TetrisClient
 
         private void GameTick(object sender, EventArgs e)
         {
+            TetrisGrid.Children.Clear();
             MoveDown();
             Draw();
         }

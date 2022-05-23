@@ -7,12 +7,13 @@ namespace TetrisClient
     public class TetrisEngine
     {
         public int dropSpeedInSeconds = 1;
-        private int[,] _board = new int[15, 4];
+        public Board Board;
         private TetrominioService _tetrominioService = new TetrominioService();
         public Tetromino currentTetromino;
         public TetrisEngine()
         {
             currentTetromino = _tetrominioService.GetRandomTetromino();
+            Board = new Board();
         }
     }
 }

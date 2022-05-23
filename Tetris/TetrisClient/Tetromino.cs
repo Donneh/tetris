@@ -23,5 +23,10 @@ namespace TetrisClient
                 Fill = Color, // Achtergrondkleur
             };
         }
+
+        public void Rotate()
+        {
+            Shape = Shape.Rotate90();
+        }
     }
 }

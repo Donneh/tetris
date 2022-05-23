@@ -48,7 +48,7 @@ namespace TetrisClient
                     engine.currentTetromino.Position.Y++;
                     break;
                 case "Up":
-                    engine.currentTetromino.Position.Y--;
+                    engine.currentTetromino.Rotate();
                     break;
 
             }

@@ -27,11 +27,32 @@ namespace TetrisClient
         
         public MainWindow()
         {
-            InitializeComponent();          
-            engine= new TetrisEngine();
+            InitializeComponent();
+            KeyDown += moveObject;
+            engine = new TetrisEngine();
             timer = new DispatcherTimer();
-            
+
             StartGameLoop();
+        }
+
+        private void moveObject(Object sender, KeyEventArgs e) {
+            //System.Windows.MessageBox.Show(e.Key.ToString());
+            switch (e.Key.ToString()) {
+                case "Right":
+                    engine.currentTetromino.Position.X++;
+                    break;
+                case "Left":
+                    engine.currentTetromino.Position.X--;
+                    break;
+                case "Down":
+                    engine.currentTetromino.Position.Y++;
+                    break;
+                case "Up":
+                    engine.currentTetromino.Position.Y--;
+                    break;
+
+            }
+                       
         }
 
         void StartGameLoop()
@@ -56,7 +77,7 @@ namespace TetrisClient
 
         void Draw()
         {
-            int[,] values = engine.currentTetromino.Shape.Value;
+            int[,] values = engine.currentTetromino.Shape.Value;         
             for (int i = 0; i < values.GetLength(0); i++)
             {
                 for (int j = 0; j < values.GetLength(1); j++)
@@ -64,9 +85,9 @@ namespace TetrisClient
                     // Als de waarde niet gelijk is aan 1,
                     // dan hoeft die niet getekent te worden:
                     if (values[i, j] != 1) continue;
-
+                   
                     var rectangle = engine.currentTetromino.ToRectangle();
-
+                    
                     TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
                     Grid.SetRow(rectangle, (int)(i + engine.currentTetromino.Position.Y)); // Zet de rij
                     Grid.SetColumn(rectangle, (int)(j + engine.currentTetromino.Position.X)); // Zet de kolom

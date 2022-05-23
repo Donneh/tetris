@@ -27,8 +27,7 @@ namespace TetrisClient
         
         public MainWindow()
         {
-            InitializeComponent();
-            KeyDown += moveObject;
+            InitializeComponent();            
             engine = new TetrisEngine();
             timer = new DispatcherTimer();
 
@@ -37,8 +36,9 @@ namespace TetrisClient
             
         }
 
-        private void moveObject(Object sender, KeyEventArgs e) {
-            //System.Windows.MessageBox.Show(e.Key.ToString());
+
+        private void moveObject(Object sender, KeyEventArgs e) {   
+            
             switch (e.Key.ToString()) {
                 case "Right":
                     engine.currentTetromino.Position.X++;
@@ -49,7 +49,7 @@ namespace TetrisClient
                 case "Down":
                     engine.currentTetromino.Position.Y++;
                     break;
-                case "Up":
+                case "Up":                   
                     engine.currentTetromino.Rotate();
                     break;
 
@@ -70,6 +70,11 @@ namespace TetrisClient
             TetrisGrid.Children.Clear();
             MoveDown();
             Draw();
+        }
+
+        private void OnGridLoaded(object sender, EventArgs e) {
+            TetrisGrid.Focus();
+        
         }
 
         private void MoveDown()

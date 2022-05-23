@@ -56,8 +56,8 @@ namespace TetrisClient
         
         private Brush[] Colors =
         {
-            Brushes.Cyan,
             Brushes.Blue,
+            Brushes.Cyan,
             Brushes.Orange,
             Brushes.Yellow,
             Brushes.Green,

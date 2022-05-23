@@ -2,13 +2,13 @@
 {
     public class Board
     {
-        private const int Columns = 10;
-        private const int Rows = 20;
-        private int[,] _squares;
+        private const int Columns = 9;
+        private const int Rows = 13;
+        public int[,] squares;
 
         public Board()
-        {
-            this._squares = new int[Rows, Columns];
+        { 
+            squares = new int[Rows, Columns];
         }
         
         

@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System;
+using System.Numerics;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -28,5 +29,6 @@ namespace TetrisClient
         {
             Shape = Shape.Rotate90();
         }
+
     }
 }

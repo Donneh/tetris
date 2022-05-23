@@ -32,7 +32,9 @@ namespace TetrisClient
             engine = new TetrisEngine();
             timer = new DispatcherTimer();
 
+            engine.CheckCollision();
             StartGameLoop();
+            
         }
 
         private void moveObject(Object sender, KeyEventArgs e) {
@@ -72,7 +74,14 @@ namespace TetrisClient
 
         private void MoveDown()
         {
-            engine.currentTetromino.Position.Y++;
+            if (engine.CheckCollision())
+            {
+                engine.SpawnTetromino();
+            }
+            else
+            {
+                engine.currentTetromino.Position.Y++;
+            }
         }
 
         void Draw()
@@ -93,6 +102,7 @@ namespace TetrisClient
                     Grid.SetColumn(rectangle, (int)(j + engine.currentTetromino.Position.X)); // Zet de kolom
                 }
             }
+            
         }
     }
 }

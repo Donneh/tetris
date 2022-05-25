@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
@@ -25,48 +26,31 @@ namespace TetrisClient
             {
                 for (int x = 0; x < shape.GetLength(1); x++)
                 {
-
-                    Debug.WriteLine(shape[x, y]);
+                   
                     if (shape[y, x] == 0) {
                         continue;
                     }
                     if (currentTetromino.Position.Y + y > Board.squares.GetLength(0)) {                       
                         return true;
                     }
+                    
+                    if (currentTetromino.Position.X + x > (Board.squares.GetLength(1))-1 || currentTetromino.Position.X + x < 0)
+                    {
+                        return true;
+                    }
+
                 }
             }
 
             return false;
         }
 
-        public bool CheckRightSideCollision() {
-            var shape = currentTetromino.Shape.Value;
-
-            for (int x = 0; x < shape.GetLength(1); x++)
-            {
-                for (int y = 0; y < shape.GetLength(0); y++)
-                {                   
-                    return currentTetromino.Position.X + 3 > (Board.squares.GetLength(1))-1;
-                }
-            }
-
-            return false;
-        }
-
-        public bool CheckLeftSideCollision()
+        internal bool CheckCollison()
         {
-            var shape = currentTetromino.Shape.Value;         
-            for (int x = 0; x < shape.GetLength(1); x++)
-            {
-                for (int y = 0; y < shape.GetLength(0); y++)
-                {
-                    //Debug.WriteLine(x);
-                    return currentTetromino.Position.X == 0;
-                }
-            }
-
-            return false;
+            throw new NotImplementedException();
         }
+
+        
 
         public void SpawnTetromino()
         {

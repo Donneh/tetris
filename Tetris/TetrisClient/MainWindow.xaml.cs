@@ -41,20 +41,15 @@ namespace TetrisClient
             
             switch (e.Key.ToString()) {
                 case "Right":
-                    if (engine.CheckRightSideCollision() == false) {
+                    if (engine.CheckCollision() == false) {
                     engine.currentTetromino.Position.X++;
                     }                   
                     break;
-                case "Left":
-                    engine.test();
-                    if (engine.CheckLeftSideCollision() == false)
+                case "Left":                  
+                    if (engine.CheckCollision() == false)
                     {
                         engine.currentTetromino.Position.X--;
-                    }
-                    else
-                    {
-                        System.Windows.MessageBox.Show("YEAH");
-                    }
+                    }                   
 
                     break;
                 case "Down":

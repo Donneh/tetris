@@ -41,19 +41,19 @@ namespace TetrisClient
             
             switch (e.Key.ToString()) {
                 case "Right":
-                    if (!(engine.CheckCollision() == "right")) {
+                    if (!(engine.CheckSideCollision() == true)) {
                     engine.currentTetromino.Position.X++;
                     }                   
                     break;
                 case "Left":                  
-                    if (!(engine.CheckCollision() == "left"))
+                    if (!(engine.CheckSideCollision() == true))
                     {
                         engine.currentTetromino.Position.X--;
                     }                   
 
                     break;
                 case "Down":
-                    if (engine.CheckCollision() == "under")
+                    if (engine.CheckCollision() == true)
                     {
                         engine.SpawnTetromino();
                     }
@@ -92,9 +92,8 @@ namespace TetrisClient
 
         private void MoveDown()
         {
-            if (!(engine.CheckCollision() == "under"))
-            {
-                //System.Windows.MessageBox.Show("jaja");
+            if (!engine.CheckCollision() == true)
+            {                
                 engine.currentTetromino.Position.Y++;
             }
             else {
@@ -109,9 +108,7 @@ namespace TetrisClient
             for (int i = 0; i < values.GetLength(0); i++)
             {
                 for (int j = 0; j < values.GetLength(1); j++)
-                {
-                    // Als de waarde niet gelijk is aan 1,
-                    // dan hoeft die niet getekent te worden:
+                {                    
                     if (values[i, j] != 1) continue;
                    
                     var rectangle = engine.currentTetromino.ToRectangle();
@@ -133,8 +130,7 @@ namespace TetrisClient
                 {
                     for (int j = 0; j < values.GetLength(1); j++)
                     {
-                        // Als de waarde niet gelijk is aan 1,
-                        // dan hoeft die niet getekent te worden:
+                        
                         if (values[i, j] != 1) continue;
 
                         var rectangle = tetromino.ToRectangle();

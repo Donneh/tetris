@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace TetrisClient
 {
@@ -22,11 +23,17 @@ namespace TetrisClient
 
             for (int y = 0; y < shape.GetLength(0); y++)
             {
-                //for (int x = 0; x < shape.GetLength(1); x++)
-                //{
-                    //deze y is altijd 0 en x wordt niet gebruikt
-                    return currentTetromino.Position.Y > Board.squares.GetLength(0);
-                //}
+                for (int x = 0; x < shape.GetLength(1); x++)
+                {
+
+                    Debug.WriteLine(shape[x, y]);
+                    if (shape[y, x] == 0) {
+                        continue;
+                    }
+                    if (currentTetromino.Position.Y + y > Board.squares.GetLength(0)) {                       
+                        return true;
+                    }
+                }
             }
 
             return false;
@@ -38,9 +45,7 @@ namespace TetrisClient
             for (int x = 0; x < shape.GetLength(1); x++)
             {
                 for (int y = 0; y < shape.GetLength(0); y++)
-                {
-                    Debug.WriteLine(currentTetromino.Position.X);
-                    Debug.WriteLine(Board.squares.GetLength(1));
+                {                   
                     return currentTetromino.Position.X + 3 > (Board.squares.GetLength(1))-1;
                 }
             }
@@ -50,18 +55,36 @@ namespace TetrisClient
 
         public bool CheckLeftSideCollision()
         {
-            var shape = currentTetromino.Shape.Value;
-            Debug.WriteLine(shape);
-
+            var shape = currentTetromino.Shape.Value;         
             for (int x = 0; x < shape.GetLength(1); x++)
             {
                 for (int y = 0; y < shape.GetLength(0); y++)
-                {                   
+                {
+                    //Debug.WriteLine(x);
                     return currentTetromino.Position.X == 0;
                 }
             }
 
             return false;
+        }
+
+
+        public int test()
+        {
+            var shape = currentTetromino.Shape.Value;
+            for (int i = 0; i < shape.GetLength(0); i++)
+            {
+                //i gaat fout bij blok
+                var test = Enumerable.Range(0, shape.GetLength(1))
+                .Select(x => shape[i, x])
+                .ToArray();
+                foreach (var y in test) {
+                 
+                }
+                
+                
+            }
+            return 0;
         }
 
         public void SpawnTetromino()

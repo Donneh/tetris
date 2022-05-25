@@ -46,6 +46,7 @@ namespace TetrisClient
                     }                   
                     break;
                 case "Left":
+                    engine.test();
                     if (engine.CheckLeftSideCollision() == false)
                     {
                         engine.currentTetromino.Position.X--;

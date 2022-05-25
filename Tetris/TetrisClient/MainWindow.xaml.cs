@@ -41,19 +41,19 @@ namespace TetrisClient
             
             switch (e.Key.ToString()) {
                 case "Right":
-                    if (engine.CheckCollision() == false) {
+                    if (!(engine.CheckCollision() == "right")) {
                     engine.currentTetromino.Position.X++;
                     }                   
                     break;
                 case "Left":                  
-                    if (engine.CheckCollision() == false)
+                    if (!(engine.CheckCollision() == "left"))
                     {
                         engine.currentTetromino.Position.X--;
                     }                   
 
                     break;
                 case "Down":
-                    if (engine.CheckCollision())
+                    if (engine.CheckCollision() == "under")
                     {
                         engine.SpawnTetromino();
                     }
@@ -82,6 +82,7 @@ namespace TetrisClient
             TetrisGrid.Children.Clear();
             MoveDown();
             Draw();
+            DrawStuck();
         }
 
         private void OnGridLoaded(object sender, EventArgs e) {
@@ -91,14 +92,15 @@ namespace TetrisClient
 
         private void MoveDown()
         {
-            if (engine.CheckCollision())
+            if (!(engine.CheckCollision() == "under"))
             {
-                engine.SpawnTetromino();
-            }
-            else
-            {
+                //System.Windows.MessageBox.Show("jaja");
                 engine.currentTetromino.Position.Y++;
             }
+            else {
+                engine.SpawnTetromino();
+            }
+            
         }
 
         void Draw()
@@ -120,6 +122,29 @@ namespace TetrisClient
                 }
             }
             
+        }
+
+        void DrawStuck()
+        {
+            foreach (var tetromino in engine.stuckTetrominoes)
+            {
+                int[,] values = tetromino.Shape.Value;
+                for (int i = 0; i < values.GetLength(0); i++)
+                {
+                    for (int j = 0; j < values.GetLength(1); j++)
+                    {
+                        // Als de waarde niet gelijk is aan 1,
+                        // dan hoeft die niet getekent te worden:
+                        if (values[i, j] != 1) continue;
+
+                        var rectangle = tetromino.ToRectangle();
+
+                        TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
+                        Grid.SetRow(rectangle, (int)(i + tetromino.Position.Y)); // Zet de rij
+                        Grid.SetColumn(rectangle, (int)(j + tetromino.Position.X)); // Zet de kolom
+                    }
+                }
+            }
         }
     }
 }

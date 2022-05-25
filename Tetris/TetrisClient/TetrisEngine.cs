@@ -18,7 +18,7 @@ namespace TetrisClient
             Board = new Board();
         }
 
-        public bool CheckCollision()
+        public string CheckCollision()
         {
             var shape = currentTetromino.Shape.Value;
 
@@ -31,18 +31,22 @@ namespace TetrisClient
                         continue;
                     }
                     if (currentTetromino.Position.Y + y > Board.squares.GetLength(0)) {                       
-                        return true;
+                        return "under";
                     }
-                    
-                    if (currentTetromino.Position.X + x > (Board.squares.GetLength(1))-1 || currentTetromino.Position.X + x < 0)
+
+                    if (currentTetromino.Position.X + x > (Board.squares.GetLength(1)) - 2)
                     {
-                        return true;
+                        return "right";
+                    }                    
+
+                    if (currentTetromino.Position.X + x == 0) {
+                        return "left";
                     }
 
                 }
             }
 
-            return false;
+            return "";
         }
 
         internal bool CheckCollison()

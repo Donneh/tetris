@@ -68,25 +68,6 @@ namespace TetrisClient
             return false;
         }
 
-
-        public int test()
-        {
-            var shape = currentTetromino.Shape.Value;
-            for (int i = 0; i < shape.GetLength(0); i++)
-            {
-                //i gaat fout bij blok
-                var test = Enumerable.Range(0, shape.GetLength(1))
-                .Select(x => shape[i, x])
-                .ToArray();
-                foreach (var y in test) {
-                 
-                }
-                
-                
-            }
-            return 0;
-        }
-
         public void SpawnTetromino()
         {
             stuckTetrominoes.Add(currentTetromino);

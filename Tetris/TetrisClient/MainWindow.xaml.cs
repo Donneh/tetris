@@ -41,13 +41,29 @@ namespace TetrisClient
             
             switch (e.Key.ToString()) {
                 case "Right":
+                    if (engine.CheckRightSideCollision() == false) {
                     engine.currentTetromino.Position.X++;
+                    }                   
                     break;
                 case "Left":
-                    engine.currentTetromino.Position.X--;
+                    if (engine.CheckLeftSideCollision() == false)
+                    {
+                        engine.currentTetromino.Position.X--;
+                    }
+                    else
+                    {
+                        System.Windows.MessageBox.Show("YEAH");
+                    }
+
                     break;
                 case "Down":
+                    if (engine.CheckCollision())
+                    {
+                        engine.SpawnTetromino();
+                    }
+                    else {
                     engine.currentTetromino.Position.Y++;
+                    }                   
                     break;
                 case "Up":                   
                     engine.currentTetromino.Rotate();

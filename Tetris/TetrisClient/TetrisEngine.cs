@@ -25,14 +25,11 @@ namespace TetrisClient
             for (int y = 0; y < shape.GetLength(0); y++)
             {
                 for (int x = 0; x < shape.GetLength(1); x++)
-                {
-                   
+                {                   
                     if (shape[y, x] == 0) {
-                        Debug.WriteLine('a');
                         continue;
                     }
                     if (currentTetromino.Position.Y + y > Board.squares.GetLength(0)) {
-                        Debug.WriteLine('b');
                         return true;
                     }
 
@@ -46,9 +43,7 @@ namespace TetrisClient
 
 
         public bool CheckSideCollision()
-        {
-
-
+        {           
             var shape = currentTetromino.Shape.Value;
 
             for (int y = 0; y < shape.GetLength(0); y++)
@@ -57,8 +52,7 @@ namespace TetrisClient
                 {
 
                     if (shape[y, x] == 0)
-                    {
-                        Debug.WriteLine('a');
+                    {                       
                         continue;
                     }
                    

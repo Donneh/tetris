@@ -1,9 +1,11 @@
-﻿namespace TetrisClient
+﻿using System.Diagnostics;
+
+namespace TetrisClient
 {
     public class Board
     {
         private const int Columns = 10;
-        private const int Rows = 18;
+        private const int Rows = 20;
         public int[,] squares;
 
         public Board()

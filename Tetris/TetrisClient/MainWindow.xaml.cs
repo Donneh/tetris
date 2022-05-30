@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -20,7 +21,6 @@ namespace TetrisClient
             engine = new TetrisEngine();
             timer = new DispatcherTimer();
 
-            engine.CheckCollision();
             StartGameLoop();
         }
 
@@ -29,24 +29,18 @@ namespace TetrisClient
             
             switch (e.Key.ToString()) {
                 case "Right":
-                    if (engine.CheckSideCollision() != "right") {
-                    engine.currentTetromino.Position.X++;
-                    }                   
+                    var desiredPosition = engine.currentTetromino;
+                    desiredPosition.Position.X++;
+                    if (engine.MovePossible(desiredPosition) && engine.CheckSideCollision() != "right")
+                    {
+                        engine.currentTetromino.Position = desiredPosition.Position;
+                    }
                     break;
                 case "Left":                  
                     if (engine.CheckSideCollision() != "left")
                     {
                         engine.currentTetromino.Position.X--;
                     }
-                    break;
-                case "Down":
-                    if (engine.CheckCollision() == true)
-                    {
-                        engine.SpawnTetromino();
-                    }
-                    else {
-                    engine.currentTetromino.Position.Y++;
-                    }                   
                     break;
                 case "Up":                   
                     engine.currentTetromino.Rotate();
@@ -79,11 +73,15 @@ namespace TetrisClient
 
         private void MoveDown()
         {
-            if (!engine.CheckCollision() == true)
-            {                
-                engine.currentTetromino.Position.Y++;
+            var desiredPosition = engine.currentTetromino;
+            desiredPosition.Position.Y++;
+            if (engine.MovePossible(desiredPosition))
+            {
+                Debug.WriteLine("Hallo");
+                engine.currentTetromino.Position = desiredPosition.Position;
             }
             else {
+                Debug.WriteLine("Doei");
                 engine.SpawnTetromino();
             }
             

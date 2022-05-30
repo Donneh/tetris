@@ -64,8 +64,7 @@ namespace TetrisClient
                    
 
                     if (currentTetromino.Position.X + x > (Board.squares.GetLength(1)) - 2)
-                    {
-                        Debug.WriteLine('c');
+                    {                       
                         return true;
                     }                    
 

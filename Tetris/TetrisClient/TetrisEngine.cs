@@ -42,7 +42,7 @@ namespace TetrisClient
         }
 
 
-        public bool CheckSideCollision()
+        public string CheckSideCollision()
         {           
             var shape = currentTetromino.Shape.Value;
 
@@ -59,18 +59,18 @@ namespace TetrisClient
 
                     if (currentTetromino.Position.X + x > (Board.squares.GetLength(1)) - 2)
                     {                       
-                        return true;
+                        return "right";
                     }                    
 
                     if (currentTetromino.Position.X + x == 0)
                     {
-                        return true;
+                        return "left";
                     }
 
                 }
             }
 
-            return false;
+            return "";
         }
 
 

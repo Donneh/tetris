@@ -29,12 +29,12 @@ namespace TetrisClient
             
             switch (e.Key.ToString()) {
                 case "Right":
-                    if (!engine.CheckSideCollision()) {
+                    if (engine.CheckSideCollision() != "right") {
                     engine.currentTetromino.Position.X++;
                     }                   
                     break;
                 case "Left":                  
-                    if (!engine.CheckSideCollision())
+                    if (engine.CheckSideCollision() != "left")
                     {
                         engine.currentTetromino.Position.X--;
                     }

@@ -2,8 +2,8 @@
 {
     public class Board
     {
-        private const int Columns = 9;
-        private const int Rows = 14;
+        private const int Columns = 10;
+        private const int Rows = 18;
         public int[,] squares;
 
         public Board()

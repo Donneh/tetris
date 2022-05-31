@@ -50,7 +50,7 @@ namespace TetrisClient
                     desiredPosition.Shape = engine.currentTetromino.Shape;
                     desiredPosition.Position = engine.currentTetromino.Position;
                     desiredPosition.Position.X++;
-                    if (engine.MovePossible(desiredPosition))
+                    if (engine.SideMovePossible(desiredPosition))
                     {
                         engine.currentTetromino.Position = desiredPosition.Position;
                     }
@@ -60,10 +60,13 @@ namespace TetrisClient
                     desiredPosition.Shape = engine.currentTetromino.Shape;
                     desiredPosition.Position = engine.currentTetromino.Position;
                     desiredPosition.Position.X--;
-                    if (engine.MovePossible(desiredPosition))
+                    if (engine.SideMovePossible(desiredPosition))
                     {
                         engine.currentTetromino.Position = desiredPosition.Position;
                     }
+                    break;
+                case "Down":
+                    MoveDown();
                     break;
                 case "Up":                   
                     engine.currentTetromino.Rotate();
@@ -79,6 +82,7 @@ namespace TetrisClient
             desiredPosition.Shape = engine.currentTetromino.Shape;
             desiredPosition.Position = engine.currentTetromino.Position;
             desiredPosition.Position.Y++;
+           
             if (engine.MovePossible(desiredPosition))
             {
                 engine.currentTetromino.Position = desiredPosition.Position;

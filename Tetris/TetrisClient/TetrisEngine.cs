@@ -65,17 +65,14 @@ namespace TetrisClient
                         AddStuck();
                         SpawnTetromino();
                         return false;
-                    }
+                    }                    
 
-                    if (newXPos < 0 || (newXPos + 1) > (Board.squares.GetLength(1)))
-                    {
-                        
-                        return false;
-                    }
                     
-
+                    if (newYPos == 0) {
+                        newYPos++;
+                    }
                     if (Board.squares[newYPos -1 , newXPos] == 1)
-                    {
+                    {                       
                         AddStuck();
                         SpawnTetromino();
                         return false;
@@ -85,6 +82,39 @@ namespace TetrisClient
             }
 
             return true;
+        }
+
+        public bool SideMovePossible(Tetromino desiredPosition)
+        {
+            var shape = desiredPosition.Shape.Value;
+
+            for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
+            {
+                for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
+                {
+                    if (shape[yOffset, xOffset] == 0)
+                    {
+                        continue;
+                    }
+
+                    var newYPos = (int)(desiredPosition.Position.Y + yOffset);
+                    var newXPos = (int)(desiredPosition.Position.X + xOffset);
+                    if (newXPos < 0 || (newXPos + 1) > (Board.squares.GetLength(1)))
+                    {
+
+                        return false;
+                    }
+                    if (newYPos == 0)
+                    {
+                        newYPos++;
+                    }
+                    if (Board.squares[newYPos - 1, newXPos] == 1)
+                    {                        
+                        return false;
+                    }
+                }
+            }
+                    return true;
         }
     }
 }

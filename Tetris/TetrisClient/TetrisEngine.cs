@@ -18,46 +18,6 @@ namespace TetrisClient
             Board = new Board();
         }
 
-
-        public string CheckSideCollision()
-        {           
-            var shape = currentTetromino.Shape.Value;
-
-            for (int y = 0; y < shape.GetLength(0); y++)
-            {
-                for (int x = 0; x < shape.GetLength(1); x++)
-                {
-
-                    if (shape[y, x] == 0)
-                    {                       
-                        continue;
-                    }
-                   
-
-                    if (currentTetromino.Position.X + x > (Board.squares.GetLength(1)) - 2)
-                    {                       
-                        return "right";
-                    }                    
-
-                    if (currentTetromino.Position.X + x == 0)
-                    {
-                        return "left";
-                    }
-
-                }
-            }
-
-            return "";
-        }
-
-
-        internal bool CheckCollison()
-        {
-            throw new NotImplementedException();
-        }
-
-        
-
         public void SpawnTetromino()
         {
             AddStuck();

@@ -12,34 +12,35 @@ namespace TetrisClient
     /// </summary>
     public partial class MainWindow : Window
     {
-        private TetrisEngine engine;
-        private DispatcherTimer timer;
+        private readonly TetrisEngine engine;
         
         public MainWindow()
         {
             InitializeComponent();            
             engine = new TetrisEngine();
-            timer = new DispatcherTimer();
-
             StartGameLoop();
         }
 
 
-        private void moveObject(Object sender, KeyEventArgs e) {   
-            
+        private void moveObject(Object sender, KeyEventArgs e)
+        {
+
+            Tetromino desiredPosition;
             switch (e.Key.ToString()) {
                 case "Right":
-                    var desiredPosition = engine.currentTetromino;
+                    desiredPosition = engine.currentTetromino;
                     desiredPosition.Position.X++;
-                    if (engine.MovePossible(desiredPosition) && engine.CheckSideCollision() != "right")
+                    if (engine.MovePossible(desiredPosition))
                     {
                         engine.currentTetromino.Position = desiredPosition.Position;
                     }
                     break;
-                case "Left":                  
-                    if (engine.CheckSideCollision() != "left")
+                case "Left":
+                    desiredPosition = engine.currentTetromino;
+                    desiredPosition.Position.X--;
+                    if (engine.MovePossible(desiredPosition))
                     {
-                        engine.currentTetromino.Position.X--;
+                        engine.currentTetromino.Position = desiredPosition.Position;
                     }
                     break;
                 case "Up":                   

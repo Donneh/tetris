@@ -21,11 +21,30 @@ namespace TetrisClient
             StartGameLoop();
         }
 
+        private void OnGridLoaded(object sender, EventArgs e) {
+            TetrisGrid.Focus();
+        }
 
-        private void moveObject(Object sender, KeyEventArgs e)
+        private void StartGameLoop()
         {
+            var timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(GameTick);
+            timer.Interval = new TimeSpan(0, 0,0, 0, engine.dropSpeedInMilliSeconds);
+            timer.Start();
+        }
 
+        private void GameTick(object sender, EventArgs e)
+        {
+            TetrisGrid.Children.Clear();
+            DrawCurrentTetromino();
+            DrawStuckTetrominoes();
+            MoveDown();
+        }
+        
+        private void MoveObject(object sender, KeyEventArgs e)
+        {
             Tetromino desiredPosition;
+            
             switch (e.Key.ToString()) {
                 case "Right":
                     desiredPosition = engine.currentTetromino;
@@ -51,44 +70,17 @@ namespace TetrisClient
                        
         }
 
-        void StartGameLoop()
-        {
-            var timer = new DispatcherTimer();
-            timer.Tick += new EventHandler(GameTick);
-            timer.Interval = new TimeSpan(0, 0, engine.dropSpeedInSeconds);
-            timer.Start();
-        }
-
-        private void GameTick(object sender, EventArgs e)
-        {
-            TetrisGrid.Children.Clear();
-            MoveDown();
-            Draw();
-            DrawStuck();
-        }
-
-        private void OnGridLoaded(object sender, EventArgs e) {
-            TetrisGrid.Focus();
-        
-        }
-
         private void MoveDown()
         {
             var desiredPosition = engine.currentTetromino;
             desiredPosition.Position.Y++;
             if (engine.MovePossible(desiredPosition))
             {
-                Debug.WriteLine("Hallo");
                 engine.currentTetromino.Position = desiredPosition.Position;
             }
-            else {
-                Debug.WriteLine("Doei");
-                engine.SpawnTetromino();
-            }
-            
         }
 
-        void Draw()
+        private void DrawCurrentTetromino()
         {
             int[,] values = engine.currentTetromino.Shape.Value;         
             for (int i = 0; i < values.GetLength(0); i++)
@@ -107,7 +99,7 @@ namespace TetrisClient
             
         }
 
-        void DrawStuck()
+        private void DrawStuckTetrominoes()
         {
             foreach (var tetromino in engine.stuckTetrominoes)
             {

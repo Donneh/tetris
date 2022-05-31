@@ -72,7 +72,9 @@ namespace TetrisClient
 
         private void MoveDown()
         {
-            var desiredPosition = engine.currentTetromino;
+            var desiredPosition = new Tetromino();
+            desiredPosition.Shape = engine.currentTetromino.Shape;
+            desiredPosition.Position = engine.currentTetromino.Position;
             desiredPosition.Position.Y++;
             if (engine.MovePossible(desiredPosition))
             {

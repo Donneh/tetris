@@ -21,11 +21,10 @@ namespace TetrisClient
 
         public void SpawnTetromino()
         {
-            AddStuck();
             currentTetromino = _tetrominioService.GetRandomTetromino();
         }
 
-        private void AddStuck()
+        public void AddStuck()
         {
             stuckTetrominoes.Add(currentTetromino);
             var shape = currentTetromino.Shape.Value;
@@ -39,8 +38,8 @@ namespace TetrisClient
                     }
 
                     var newYPos = (int)currentTetromino.Position.Y + yOffset - 1;
-                    var newXPos = (int)currentTetromino.Position.X + xOffset - 1;
-                    Board.squares[newYPos - 1, newXPos - 1] = 1;
+                    var newXPos = (int)currentTetromino.Position.X + xOffset;
+                    Board.squares[newYPos, newXPos] = 1;
                 }
             }
         }
@@ -60,24 +59,25 @@ namespace TetrisClient
 
                     var newYPos = (int)(desiredPosition.Position.Y + yOffset);
                     var newXPos  = (int)(desiredPosition.Position.X + xOffset);
-                    
-                    
+
                     if (newYPos > Board.squares.GetLength(0))
                     {
                         AddStuck();
                         SpawnTetromino();
                         return false;
                     }
-
-                    if (Board.squares[newYPos - 1, newXPos - 1] == 1)
+                    
+                    
+                    if (newXPos < 0 || newXPos > (Board.squares.GetLength(1)))
                     {
-                        AddStuck();
-                        SpawnTetromino();
                         return false;
                     }
                     
-                    if (newXPos < 0 || newXPos > (Board.squares.GetLength(1) - 1))
+
+                    if (Board.squares[newYPos -1 , newXPos] == 1)
                     {
+                        AddStuck();
+                        SpawnTetromino();
                         return false;
                     }
                     

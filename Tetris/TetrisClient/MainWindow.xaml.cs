@@ -42,12 +42,13 @@ namespace TetrisClient
         }
         
         private void MoveObject(object sender, KeyEventArgs e)
-        {
-            Tetromino desiredPosition;
+        {            
             
             switch (e.Key.ToString()) {
-                case "Right":
-                    desiredPosition = engine.currentTetromino;
+                case "Right":                 
+                    var desiredPosition = new Tetromino();
+                    desiredPosition.Shape = engine.currentTetromino.Shape;
+                    desiredPosition.Position = engine.currentTetromino.Position;
                     desiredPosition.Position.X++;
                     if (engine.MovePossible(desiredPosition))
                     {
@@ -55,7 +56,9 @@ namespace TetrisClient
                     }
                     break;
                 case "Left":
-                    desiredPosition = engine.currentTetromino;
+                    desiredPosition = new Tetromino();
+                    desiredPosition.Shape = engine.currentTetromino.Shape;
+                    desiredPosition.Position = engine.currentTetromino.Position;
                     desiredPosition.Position.X--;
                     if (engine.MovePossible(desiredPosition))
                     {

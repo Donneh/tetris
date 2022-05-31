@@ -66,10 +66,12 @@ namespace TetrisClient
                         SpawnTetromino();
                         return false;
                     }
-                    
-                    
-                    if (newXPos < 0 || newXPos > (Board.squares.GetLength(1)))
+
+                    Debug.WriteLine(newXPos);
+                    Debug.WriteLine(Board.squares.GetLength(1));
+                    if (newXPos < 0 || (newXPos + 1) > (Board.squares.GetLength(1)))
                     {
+                        
                         return false;
                     }
                     

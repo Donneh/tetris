@@ -12,7 +12,7 @@ namespace TetrisClient
         { 
             squares = new int[Rows, Columns];
         }
-        
+
         
     }
 }

@@ -39,6 +39,7 @@ namespace TetrisClient
             DrawCurrentTetromino();
             DrawStuckTetrominoes();
             MoveDown();
+            engine.removeTetrominoPart(null);
         }
         
         private void MoveObject(object sender, KeyEventArgs e)
@@ -66,7 +67,36 @@ namespace TetrisClient
                     }
                     break;
                 case "Down":
-                    MoveDown();
+
+                     desiredPosition = new Tetromino();
+                    desiredPosition.Shape = engine.currentTetromino.Shape;
+                    desiredPosition.Position = engine.currentTetromino.Position;
+                    desiredPosition.Position.Y+=19;
+                    for (var i = 0; i < desiredPosition.Position.Y; i++) {
+                        
+                        
+                        if (desiredPosition.Position.Y !< 20)
+                        {
+                            
+                            if (engine.MovePossible(desiredPosition) && desiredPosition.Position.Y != 0)
+                            {                                
+                                engine.currentTetromino.Position.Y = desiredPosition.Position.Y;
+                                //Debug.WriteLine(engine.currentTetromino.Position.Y);
+                                break;
+                            }
+                            else
+                            {
+                                desiredPosition.Position.Y--;                           
+                                Debug.WriteLine(desiredPosition.Position.Y);
+                            }
+                        }
+                        else
+                        {
+                            desiredPosition.Position.Y--;
+                            Debug.WriteLine(desiredPosition.Position.Y);
+                        }
+                        
+                    } ;
                     break;
                 case "Up":                   
                     engine.currentTetromino.Rotate();

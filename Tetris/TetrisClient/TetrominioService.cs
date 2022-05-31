@@ -67,7 +67,7 @@ namespace TetrisClient
         public Tetromino GetRandomTetromino()
         {
             var Random = new Random();
-            var randomInt = Random.Next(0, PossibleShapes.Length);
+            var randomInt = 1;
 
             var tetromino = new Tetromino();
             tetromino.Shape = PossibleShapes[randomInt];

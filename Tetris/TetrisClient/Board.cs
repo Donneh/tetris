@@ -5,7 +5,7 @@ namespace TetrisClient
     public class Board
     {
         private const int Columns = 10;
-        private const int Rows = 20;
+        private const int Rows = 19;
         public int[,] squares;
 
         public Board()

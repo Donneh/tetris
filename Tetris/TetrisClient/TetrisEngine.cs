@@ -7,11 +7,12 @@ namespace TetrisClient
 {
     public class TetrisEngine
     {
-        public int dropSpeedInSeconds = 1;
         public Board Board;
         private TetrominioService _tetrominioService = new TetrominioService();
         public Tetromino currentTetromino;
         public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
+        public readonly int dropSpeedInMilliSeconds = 500;
+
         public TetrisEngine()
         {
             currentTetromino = _tetrominioService.GetRandomTetromino();
@@ -20,25 +21,24 @@ namespace TetrisClient
 
         public void SpawnTetromino()
         {
-            AddStuck();
             currentTetromino = _tetrominioService.GetRandomTetromino();
         }
 
-        private void AddStuck()
+        public void AddStuck()
         {
             stuckTetrominoes.Add(currentTetromino);
             var shape = currentTetromino.Shape.Value;
 
-            for (int y = 0; y < shape.GetLength(0); y++)
+            for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
             {
-                for (int x = 0; x < shape.GetLength(1); x++)
+                for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
                 {
-                    if (shape[y, x] == 0) {
+                    if (shape[yOffset, xOffset] == 0) {
                         continue;
                     }
 
-                    var newYPos = (int)currentTetromino.Position.Y + y - 1;
-                    var newXPos = (int)currentTetromino.Position.X + x - 1;
+                    var newYPos = (int)currentTetromino.Position.Y + yOffset - 1;
+                    var newXPos = (int)currentTetromino.Position.X + xOffset;
                     Board.squares[newYPos, newXPos] = 1;
                 }
             }
@@ -48,25 +48,39 @@ namespace TetrisClient
         {
             var shape = desiredPosition.Shape.Value;
 
-            for (int y = 0; y < shape.GetLength(0); y++)
+            for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
             {
-                for (int x = 0; x < shape.GetLength(1); x++)
+                for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
                 {
-                    if (shape[y, x] == 0)
+                    if (shape[yOffset, xOffset] == 0)
                     {
                         continue;
                     }
 
-                    var newYPos = (int)(desiredPosition.Position.Y + y);
-                    var newXPos  = (int)(desiredPosition.Position.X + x);
-                    if (newYPos > Board.squares.GetLength(0) - 1)
+                    var newYPos = (int)(desiredPosition.Position.Y + yOffset);
+                    var newXPos  = (int)(desiredPosition.Position.X + xOffset);
+
+                    if (newYPos > Board.squares.GetLength(0))
                     {
+                        AddStuck();
+                        SpawnTetromino();
                         return false;
                     }
-                    if (Board.squares[newYPos, newXPos] == 1)
+
+                    if (newXPos < 0 || (newXPos + 1) > (Board.squares.GetLength(1)))
                     {
+                        
                         return false;
                     }
+                    
+
+                    if (Board.squares[newYPos -1 , newXPos] == 1)
+                    {
+                        AddStuck();
+                        SpawnTetromino();
+                        return false;
+                    }
+                    
                 }
             }
 

@@ -67,8 +67,6 @@ namespace TetrisClient
                         return false;
                     }
 
-                    Debug.WriteLine(newXPos);
-                    Debug.WriteLine(Board.squares.GetLength(1));
                     if (newXPos < 0 || (newXPos + 1) > (Board.squares.GetLength(1)))
                     {
                         

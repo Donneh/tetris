@@ -39,7 +39,7 @@ namespace TetrisClient
             DrawCurrentTetromino();
             DrawStuckTetrominoes();
             MoveDown();
-            engine.removeTetrominoPart(null);
+            engine.RemoveTetrominoPart(null);
         }
         
         private void MoveObject(object sender, KeyEventArgs e)

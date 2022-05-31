@@ -11,7 +11,7 @@ namespace TetrisClient
         private TetrominioService _tetrominioService = new TetrominioService();
         public Tetromino currentTetromino;
         public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
-        public readonly int dropSpeedInMilliSeconds = 100;
+        public readonly int dropSpeedInMilliSeconds = 70;
 
         public TetrisEngine()
         {
@@ -143,10 +143,10 @@ namespace TetrisClient
             return allFullRowsIndex;
         }
 
-        public void removeTetrominoPart(List<int> FullRows)
+        public void RemoveTetrominoPart(List<int> FullRows)
         {
             List<int> rows = looper();
-            Debug.WriteLine(rows);
+           
             //func om te kijken of tetromino in de gegeven rij zit           
             
             foreach (var Tetromino in stuckTetrominoes)
@@ -160,19 +160,12 @@ namespace TetrisClient
                     for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
                     {
                         if(shape[yOffset, xOffset] == 1)
-                        {
-                            for (var i = 0; i < Board.squares.GetLength(1); i++) {
-                            //Debug.WriteLine(i);
-                            foreach(int x in rows) {
-                                Debug.WriteLine("i" + i);
-                                Debug.WriteLine("X" + x);
-                                
-                                shape[x-1, 1] = 0;
-                            }                                
-                            }                           
-                           // Debug.WriteLine(Tetromino.Position.X + xOffset);
-                           // Debug.WriteLine(Tetromino.Position.Y + yOffset);
-                           // shape[yOffset, xOffset] = 0;
+                        {                                                          
+                            foreach(int y in rows) {                                                               
+                                shape[((int)(y - (Tetromino.Position.Y - 1))), (xOffset)] = 0;                                
+                            }
+                            break;
+                                                      
                         }
                     }
                     

@@ -11,7 +11,7 @@ namespace TetrisClient
         private TetrominioService _tetrominioService = new TetrominioService();
         public Tetromino currentTetromino;
         public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
-        public readonly int dropSpeedInMilliSeconds = 70;
+        public readonly int dropSpeedInMilliSeconds = 1;
 
         public TetrisEngine()
         {
@@ -28,6 +28,9 @@ namespace TetrisClient
 
         public void AddStuck()
         {
+            //var tet = new Tetromino();
+           // tet.Shape = currentTetromino.Shape;
+            //tet.Position = currentTetromino.Position;
             stuckTetrominoes.Add(currentTetromino);
             var shape = currentTetromino.Shape.Value;
 
@@ -65,8 +68,8 @@ namespace TetrisClient
 
                     if (newYPos > Board.squares.GetLength(0))
                     {                        
-                        AddStuck();
-                        SpawnTetromino();
+                        //AddStuck();
+                        //SpawnTetromino();
                         return false;
                     }                    
 
@@ -76,8 +79,8 @@ namespace TetrisClient
                     }
                     if (Board.squares[newYPos -1 , newXPos] == 1)
                     {                        
-                        AddStuck();
-                        SpawnTetromino();
+                       // AddStuck();
+                       // SpawnTetromino();
                         return false;
                     }
                     
@@ -143,7 +146,7 @@ namespace TetrisClient
             return allFullRowsIndex;
         }
 
-        public void RemoveTetrominoPart(List<int> FullRows)
+        public List<int> RemoveTetrominoPart()
         {
             List<int> rows = looper();
            
@@ -160,9 +163,13 @@ namespace TetrisClient
                     for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
                     {
                         if(shape[yOffset, xOffset] == 1)
-                        {                                                          
-                            foreach(int y in rows) {                                                               
-                                shape[((int)(y - (Tetromino.Position.Y - 1))), (xOffset)] = 0;                                
+                        {
+                            if (rows.Count != 0)
+                            {
+                                foreach (int y in rows)
+                                {
+                                    shape[((int)(y - (Tetromino.Position.Y - 1))), (xOffset)] = 0;
+                                }
                             }
                             break;
                                                       
@@ -171,6 +178,8 @@ namespace TetrisClient
                     
                 }
             }
+            //return de getallen van de rijen die je verwijdert zodat je de tetromino's omlaag kan gooien. :)
+            return null;
         }
     }
 }

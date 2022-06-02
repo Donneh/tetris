@@ -39,7 +39,7 @@ namespace TetrisClient
             DrawCurrentTetromino();
             DrawStuckTetrominoes();
             MoveDown();
-            engine.RemoveTetrominoPart(null);
+            engine.RemoveTetrominoPart();
         }
         
         private void MoveObject(object sender, KeyEventArgs e)
@@ -67,36 +67,48 @@ namespace TetrisClient
                     }
                     break;
                 case "Down":
-
-                     desiredPosition = new Tetromino();
+                    desiredPosition = new Tetromino();
                     desiredPosition.Shape = engine.currentTetromino.Shape;
                     desiredPosition.Position = engine.currentTetromino.Position;
-                    desiredPosition.Position.Y+=19;
-                    for (var i = 0; i < desiredPosition.Position.Y; i++) {
-                        
-                        
-                        if (desiredPosition.Position.Y !< 20)
-                        {
-                            
-                            if (engine.MovePossible(desiredPosition) && desiredPosition.Position.Y != 0)
-                            {                                
-                                engine.currentTetromino.Position.Y = desiredPosition.Position.Y;
-                                //Debug.WriteLine(engine.currentTetromino.Position.Y);
-                                break;
-                            }
-                            else
-                            {
-                                desiredPosition.Position.Y--;                           
-                                Debug.WriteLine(desiredPosition.Position.Y);
-                            }
-                        }
-                        else
-                        {
-                            desiredPosition.Position.Y--;
-                            Debug.WriteLine(desiredPosition.Position.Y);
-                        }
-                        
-                    } ;
+                    desiredPosition.Position.Y++;
+                    while (engine.MovePossible(desiredPosition))
+                    {
+                            desiredPosition.Position.Y++;
+                            //Debug.WriteLine(engine.currentTetromino.Position.Y);                        
+                    }
+                    desiredPosition.Position.Y -= 1;
+                    engine.currentTetromino.Position = desiredPosition.Position;
+                    engine.AddStuck();
+                    //engine.SpawnTetromino();
+
+
+
+                    // Debug.WriteLine(desiredPosition.Position.Y - engine.currentTetromino.Position.Y)
+
+                    //desiredPosition.Position.Y = 19;
+                    //Debug.WriteLine(engine.currentTetromino.Position.Y);
+
+                    //for (var i = 0; i < desiredPosition.Position.Y; i++)
+                    //{
+                    //   if (desiredPosition.Position.Y < 20)
+                    // {
+                    //   if (engine.MovePossible(desiredPosition) && desiredPosition.Position.Y != 0)
+                    // {
+                    //   engine.currentTetromino.Position.Y += desiredPosition.Position.Y;
+                    // break;
+                    // }
+                    // else
+                    //  {
+                    //      desiredPosition.Position.Y--;
+                    //  }
+                    //  }
+                    // else {
+                    //      desiredPosition.Position.Y--;
+                    //   }
+                    //   }
+
+
+                    ;
                     break;
                 case "Up":                   
                     engine.currentTetromino.Rotate();
@@ -112,10 +124,14 @@ namespace TetrisClient
             desiredPosition.Shape = engine.currentTetromino.Shape;
             desiredPosition.Position = engine.currentTetromino.Position;
             desiredPosition.Position.Y++;
-           
+
             if (engine.MovePossible(desiredPosition))
             {
                 engine.currentTetromino.Position = desiredPosition.Position;
+            }
+            else {
+                engine.AddStuck();
+                engine.SpawnTetromino();
             }
         }
 

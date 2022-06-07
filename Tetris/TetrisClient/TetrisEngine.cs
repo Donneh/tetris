@@ -12,17 +12,23 @@ namespace TetrisClient
         public Tetromino currentTetromino;
         public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
         public readonly int dropSpeedInMilliSeconds = 100;
+        public int[][] playingGrid = new int[20][];
 
         public TetrisEngine()
         {
             currentTetromino = _tetrominioService.GetRandomTetromino();
             Board = new Board();
+            for (var i = 0; i < 20; i++)
+            {
+                playingGrid[i] = new int[10];
+            }
+            
         }
 
 
 
         public void SpawnTetromino()
-        {           
+        {          
             currentTetromino = _tetrominioService.GetRandomTetromino();
         }
 
@@ -120,28 +126,44 @@ namespace TetrisClient
                     return true;
         }
 
-        public bool isRowFull(int row) {
-
-            for (var i = 0; i<Board.squares.GetLength(1); i++) {
+        public List<int> FillList() {
+            List<int> allFullRowsIndex = new();
+           
+               
+                for (var i=0; i<playingGrid.Length; i++)
+                {
+                    if (!playingGrid[i].Contains(0))
+                    {
+                    Debug.WriteLine(i);
+                        allFullRowsIndex.Add(i);
+                    }
+                }
                 
-                if(Board.squares[row, i] == 0){
-                    return false;
-                }                               
-            }
-            return true; 
+                return allFullRowsIndex;
         }
 
-        public List<int> FillList() {
-            List<int> allFullRowsIndex = new List<int>();
-            for (var i = 0; i < Board.squares.GetLength(0); i++)
+        public void DrawInArray()
+        {
+            int[,] values = currentTetromino.Shape.Value;
+            for (int i = 0; i < values.GetLength(0); i++)
             {
-                if (isRowFull(i)) {
-                    
-                    allFullRowsIndex.Add(i);
+                for (int j = 0; j < values.GetLength(1); j++)
+                {
+                    if (values[i, j] != 1) continue;
+
+                    var rectangle = currentTetromino.ToRectangle();
+
+                    playingGrid[(int)(i + currentTetromino.Position.Y)][(int)(j + currentTetromino.Position.X)] = 1;
+
+
                 }
             }
-            return allFullRowsIndex;
+            
         }
+
+        
+
+
 
         public List<int> RemoveTetrominoPart()
         {

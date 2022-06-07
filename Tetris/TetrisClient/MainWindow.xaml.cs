@@ -39,8 +39,10 @@ namespace TetrisClient
             TetrisGrid.Children.Clear();
             DrawCurrentTetromino();
             DrawStuckTetrominoes();
+            engine.DrawInArray();
             MoveDown();
-            engine.RemoveTetrominoPart();      
+            engine.FillList();
+            //engine.RemoveTetrominoPart();      
             ;
         }
         
@@ -96,9 +98,11 @@ namespace TetrisClient
 
         private void MoveDown()
         {
-            var desiredPosition = new Tetromino();
-            desiredPosition.Shape = engine.currentTetromino.Shape;
-            desiredPosition.Position = engine.currentTetromino.Position;
+            var desiredPosition = new Tetromino
+            {
+                Shape = engine.currentTetromino.Shape,
+                Position = engine.currentTetromino.Position
+            };
             desiredPosition.Position.Y++;
 
             if (engine.MovePossible(desiredPosition))

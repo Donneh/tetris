@@ -11,7 +11,7 @@ namespace TetrisClient
         private TetrominioService _tetrominioService = new TetrominioService();
         public Tetromino currentTetromino;
         public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
-        public readonly int dropSpeedInMilliSeconds = 500;
+        public readonly int dropSpeedInMilliSeconds = 100;
 
         public TetrisEngine()
         {
@@ -19,15 +19,21 @@ namespace TetrisClient
             Board = new Board();
         }
 
+
+
         public void SpawnTetromino()
-        {
+        {           
             currentTetromino = _tetrominioService.GetRandomTetromino();
         }
 
         public void AddStuck()
         {
-            stuckTetrominoes.Add(currentTetromino);
-            var shape = currentTetromino.Shape.Value;
+            var tet = new Tetromino();
+            tet.Shape = new Matrix( currentTetromino.Shape.Value);
+            tet.Position = new System.Numerics.Vector2(currentTetromino.Position.X, currentTetromino.Position.Y);
+            tet.Color = currentTetromino.Color;
+            stuckTetrominoes.Add(tet);
+            var shape = tet.Shape.Value;
 
             for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
             {
@@ -57,13 +63,12 @@ namespace TetrisClient
                         continue;
                     }
 
+
                     var newYPos = (int)(desiredPosition.Position.Y + yOffset);
                     var newXPos  = (int)(desiredPosition.Position.X + xOffset);
 
                     if (newYPos > Board.squares.GetLength(0))
-                    {
-                        AddStuck();
-                        SpawnTetromino();
+                    {                                                
                         return false;
                     }                    
 
@@ -72,9 +77,7 @@ namespace TetrisClient
                         newYPos++;
                     }
                     if (Board.squares[newYPos -1 , newXPos] == 1)
-                    {                       
-                        AddStuck();
-                        SpawnTetromino();
+                    {                                               
                         return false;
                     }
                     
@@ -116,5 +119,76 @@ namespace TetrisClient
             }
                     return true;
         }
+
+        public bool isRowFull(int row) {
+
+            for (var i = 0; i<Board.squares.GetLength(1); i++) {
+                
+                if(Board.squares[row, i] == 0){
+                    return false;
+                }                               
+            }
+            return true; 
+        }
+
+        public List<int> FillList() {
+            List<int> allFullRowsIndex = new List<int>();
+            for (var i = 0; i < Board.squares.GetLength(0); i++)
+            {
+                if (isRowFull(i)) {
+                    
+                    allFullRowsIndex.Add(i);
+                }
+            }
+            return allFullRowsIndex;
+        }
+
+        public List<int> RemoveTetrominoPart()
+        {
+            List<int> fullRows = FillList();
+
+            foreach (var Tetromino in stuckTetrominoes)
+            {
+               
+
+               
+
+                    var shape = Tetromino.Shape.Value;
+
+                    for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
+                    {
+                        //y as van tetromino
+                        for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
+                        {
+
+                            //check if tetromino in row with 4 blocks
+
+                            //x as van tetromino
+
+                            if (shape[yOffset, xOffset] == 1)
+                            {
+                                //kijk of vorm niet 0 is
+                                foreach (var row in fullRows)
+                                {
+                               
+                                    shape[((int)(row - (Tetromino.Position.Y - 1))), (xOffset)] = 0;
+                                //Debug.WriteLine(Tetromino.Position.Y );
+                                //Debug.WriteLine(row);
+                                   
+                            }
+                            
+
+                        }
+                        
+                    }
+                }
+            }
+            return fullRows;
+            //        //return de getallen van de rijen die je verwijdert zodat je de tetromino's omlaag kan gooien. :)
+            
+        }
+
+        
+                            }
     }
-}
+

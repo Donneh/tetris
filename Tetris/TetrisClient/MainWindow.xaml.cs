@@ -13,7 +13,8 @@ namespace TetrisClient
     public partial class MainWindow : Window
     {
         private readonly TetrisEngine engine;
-        
+        private DispatcherTimer timer;
+
         public MainWindow()
         {
             InitializeComponent();            
@@ -27,7 +28,7 @@ namespace TetrisClient
 
         private void StartGameLoop()
         {
-            var timer = new DispatcherTimer();
+            timer = new DispatcherTimer();
             timer.Tick += new EventHandler(GameTick);
             timer.Interval = new TimeSpan(0, 0,0, 0, engine.dropSpeedInMilliSeconds);
             timer.Start();
@@ -39,16 +40,20 @@ namespace TetrisClient
             DrawCurrentTetromino();
             DrawStuckTetrominoes();
             MoveDown();
+            engine.RemoveTetrominoPart();      
+            ;
         }
         
         private void MoveObject(object sender, KeyEventArgs e)
         {            
             
             switch (e.Key.ToString()) {
-                case "Right":                 
-                    var desiredPosition = new Tetromino();
-                    desiredPosition.Shape = engine.currentTetromino.Shape;
-                    desiredPosition.Position = engine.currentTetromino.Position;
+                case "Right":
+                    var desiredPosition = new Tetromino
+                    {
+                        Shape = engine.currentTetromino.Shape,
+                        Position = engine.currentTetromino.Position
+                    };
                     desiredPosition.Position.X++;
                     if (engine.SideMovePossible(desiredPosition))
                     {
@@ -56,9 +61,11 @@ namespace TetrisClient
                     }
                     break;
                 case "Left":
-                    desiredPosition = new Tetromino();
-                    desiredPosition.Shape = engine.currentTetromino.Shape;
-                    desiredPosition.Position = engine.currentTetromino.Position;
+                    desiredPosition = new Tetromino
+                    {
+                        Shape = engine.currentTetromino.Shape,
+                        Position = engine.currentTetromino.Position
+                    };
                     desiredPosition.Position.X--;
                     if (engine.SideMovePossible(desiredPosition))
                     {
@@ -66,12 +73,23 @@ namespace TetrisClient
                     }
                     break;
                 case "Down":
-                    MoveDown();
+                    desiredPosition = new Tetromino
+                    {
+                        Shape = engine.currentTetromino.Shape,
+                        Position = engine.currentTetromino.Position
+                    };
+                    desiredPosition.Position.Y++;
+                    while (engine.MovePossible(desiredPosition))
+                    {
+                        desiredPosition.Position.Y++;
+                    }
+                    desiredPosition.Position.Y--;
+                    engine.currentTetromino.Position = desiredPosition.Position;
+                    engine.AddStuck();
                     break;
-                case "Up":                   
+                case "Up": 
                     engine.currentTetromino.Rotate();
                     break;
-
             }
                        
         }
@@ -82,10 +100,14 @@ namespace TetrisClient
             desiredPosition.Shape = engine.currentTetromino.Shape;
             desiredPosition.Position = engine.currentTetromino.Position;
             desiredPosition.Position.Y++;
-           
+
             if (engine.MovePossible(desiredPosition))
             {
                 engine.currentTetromino.Position = desiredPosition.Position;
+            }
+            else {
+                engine.AddStuck();
+                engine.SpawnTetromino();
             }
         }
 
@@ -127,6 +149,20 @@ namespace TetrisClient
                         Grid.SetColumn(rectangle, (int)(j + tetromino.Position.X)); // Zet de kolom
                     }
                 }
+            }
+        }
+
+
+        private void PauseClick(object sender, RoutedEventArgs e)
+        {
+            
+            timer.IsEnabled = !timer.IsEnabled;
+            if (PauseButton.Content.Equals("Pause"))
+            {
+                PauseButton.Content = "Play";
+            }
+            else {
+                PauseButton.Content = "Pause";
             }
         }
     }

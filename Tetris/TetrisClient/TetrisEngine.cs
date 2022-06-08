@@ -12,17 +12,17 @@ namespace TetrisClient
         public Tetromino currentTetromino;
         public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
         public readonly int dropSpeedInMilliSeconds = 100;
-        public int[][] playingGrid = new int[20][];
+        public List<List<int>> playingGrid = new List<List<int>>(20);
 
         public TetrisEngine()
         {
             currentTetromino = _tetrominioService.GetRandomTetromino();
             Board = new Board();
-            for (var i = 0; i < 20; i++)
-            {
-                playingGrid[i] = new int[10];
+            for(var i = 0; i < 20; i++)
+{
+                playingGrid.Add(Enumerable.Repeat(0, 10).ToList());
             }
-            
+
         }
 
 
@@ -126,89 +126,125 @@ namespace TetrisClient
                     return true;
         }
 
-        public List<int> FillList() {
-            List<int> allFullRowsIndex = new();
-           
-               
-                for (var i=0; i<playingGrid.Length; i++)
+        public void ClearLines() {
+            var rowsToReplace = new List<List<int>>();
+            for (var rowIndex = 0; rowIndex < playingGrid.Count; rowIndex++)
+            {
+                var row = playingGrid[rowIndex];
+
+                // check if row is full
+                if (!row.Contains(0))
                 {
-                    if (!playingGrid[i].Contains(0))
+                    // reset row (no need to recreate row)
+                    for (var columnIndex = 0; columnIndex < row.Count; columnIndex++)
                     {
-                    Debug.WriteLine(i);
-                        allFullRowsIndex.Add(i);
+                        row[columnIndex] = 0;
+                    }
+
+                    // add row to list
+                    rowsToReplace.Add(row);
+                }
+            }
+
+            // process full rows - delete it from current position and insert on top
+            foreach (var row in rowsToReplace)
+            {
+                playingGrid.Remove(row);
+                playingGrid.Insert(0, row);
+            }
+
+            if (rowsToReplace.Count != 0)
+            {
+                for (var rowIndex = 0; rowIndex < playingGrid.Count; rowIndex++)
+                {
+                    foreach (var col in playingGrid[rowIndex])
+                    {
+                        Debug.WriteLine(rowIndex + "" + col);
                     }
                 }
-                
-                return allFullRowsIndex;
-        }
+            }
+
+
+            }
+
+
+        //public void MoveDown(int row) {
+        //    for (var i = 0; i < playingGrid.Length; i++) {
+            
+        //    }
+        //}
 
         public void DrawInArray()
         {
-            int[,] values = currentTetromino.Shape.Value;
-            for (int i = 0; i < values.GetLength(0); i++)
-            {
-                for (int j = 0; j < values.GetLength(1); j++)
+            foreach(var tetromino in stuckTetrominoes) {
+                int[,] values = tetromino.Shape.Value;
+                for (int i = 0; i < values.GetLength(0); i++)
                 {
-                    if (values[i, j] != 1) continue;
+                    for (int j = 0; j < values.GetLength(1); j++)
+                    {
+                        if (values[i, j] != 1) {
+                            continue;
+                        }
 
-                    var rectangle = currentTetromino.ToRectangle();
+                        var rectangle = tetromino.ToRectangle();
+                        playingGrid[(int)(i + tetromino.Position.Y)][(int)(j + tetromino.Position.X)] = 1;
 
-                    playingGrid[(int)(i + currentTetromino.Position.Y)][(int)(j + currentTetromino.Position.X)] = 1;
 
-
+                    }
                 }
             }
-            
+
         }
+
+        
 
         
 
 
 
-        public List<int> RemoveTetrominoPart()
-        {
-            List<int> fullRows = FillList();
+        //public List<int> RemoveTetrominoPart()
+        //{
 
-            foreach (var Tetromino in stuckTetrominoes)
-            {
+        //    foreach (var Tetromino in stuckTetrominoes)
+        //    {
                
 
                
 
-                    var shape = Tetromino.Shape.Value;
+        //            var shape = Tetromino.Shape.Value;
 
-                    for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
-                    {
-                        //y as van tetromino
-                        for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
-                        {
+        //            for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
+        //            {
+        //                //y as van tetromino
+        //                for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
+        //                {
 
-                            //check if tetromino in row with 4 blocks
+        //                    //check if tetromino in row with 4 blocks
 
-                            //x as van tetromino
+        //                    //x as van tetromino
 
-                            if (shape[yOffset, xOffset] == 1)
-                            {
-                                //kijk of vorm niet 0 is
-                                foreach (var row in fullRows)
-                                {
+        //                    if (shape[yOffset, xOffset] == 1)
+        //                    {
+        //                        //kijk of vorm niet 0 is
+        //                        foreach (var row in fullRows)
+        //                        {
                                
-                                    shape[((int)(row - (Tetromino.Position.Y - 1))), (xOffset)] = 0;
-                                //Debug.WriteLine(Tetromino.Position.Y );
-                                //Debug.WriteLine(row);
+        //                            shape[((int)(row - (Tetromino.Position.Y - 1))), (xOffset)] = 0;
+        //                        //Debug.WriteLine(Tetromino.Position.Y );
+        //                        //Debug.WriteLine(row);
                                    
-                            }
+        //                    }
                             
 
-                        }
+        //                }
                         
-                    }
-                }
-            }
-            return fullRows;
-            //        //return de getallen van de rijen die je verwijdert zodat je de tetromino's omlaag kan gooien. :)
+        //            }
+        //        }
+        //    }
+        //    return fullRows;
+        //    //        //return de getallen van de rijen die je verwijdert zodat je de tetromino's omlaag kan gooien. :)
             
-        }
+        //}
 
         
                             }

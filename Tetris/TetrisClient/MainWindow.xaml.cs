@@ -41,8 +41,8 @@ namespace TetrisClient
             DrawStuckTetrominoes();
             engine.DrawInArray();
             MoveDown();
-            engine.ClearLines();
-            //engine.RemoveTetrominoPart();      
+            //engine.ClearLines();
+            engine.RemoveTetrominoPart();      
             ;
         }
         

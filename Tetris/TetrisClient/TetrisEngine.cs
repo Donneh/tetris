@@ -202,49 +202,20 @@ namespace TetrisClient
 
 
 
-        //public List<int> RemoveTetrominoPart()
-        //{
+        public void RemoveTetrominoPart()
+        {
+            ClearLines();
+            for (var rowIndex = 0; rowIndex < playingGrid.Count; rowIndex++)
+            {
+                for (var ColIndex = 0; ColIndex < playingGrid[rowIndex].Count; ColIndex++) {
 
-        //    foreach (var Tetromino in stuckTetrominoes)
-        //    {
-               
-
-               
-
-        //            var shape = Tetromino.Shape.Value;
-
-        //            for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
-        //            {
-        //                //y as van tetromino
-        //                for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
-        //                {
-
-        //                    //check if tetromino in row with 4 blocks
-
-        //                    //x as van tetromino
-
-        //                    if (shape[yOffset, xOffset] == 1)
-        //                    {
-        //                        //kijk of vorm niet 0 is
-        //                        foreach (var row in fullRows)
-        //                        {
-                               
-        //                            shape[((int)(row - (Tetromino.Position.Y - 1))), (xOffset)] = 0;
-        //                        //Debug.WriteLine(Tetromino.Position.Y );
-        //                        //Debug.WriteLine(row);
-                                   
-        //                    }
-                            
-
-        //                }
-                        
-        //            }
-        //        }
-        //    }
-        //    return fullRows;
-        //    //        //return de getallen van de rijen die je verwijdert zodat je de tetromino's omlaag kan gooien. :)
+                    if (playingGrid[rowIndex][ColIndex] == 1) {
+                        Debug.WriteLine(rowIndex + "       " + ColIndex);
+                    }
+                }
+            }
             
-        //}
+        }
 
         
                             }

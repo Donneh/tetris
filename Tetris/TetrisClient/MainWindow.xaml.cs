@@ -41,12 +41,8 @@ namespace TetrisClient
             TetrisGrid.Children.Clear();
             DrawCurrentTetromino();
             DrawStuckTetrominoes();
-            engine.DrawInArray();
-            
-            MoveDown();
-            //engine.ClearLines();
-            //engine.RemoveTetrominoPart();
-            //engine.printTetrominoPosition();
+            //engine.DrawInArray();            
+            MoveDown();          
             ;
         }
         
@@ -91,7 +87,11 @@ namespace TetrisClient
                     }
                     desiredPosition.Position.Y--;
                     engine.currentTetromino.Position = desiredPosition.Position;
-                    engine.AddStuck();
+                    if (!engine.AddStuck()) {
+                        timer.Stop();
+                        PauseButton.Visibility = Visibility.Hidden;
+                        System.Windows.MessageBox.Show("GAME OVER");
+                    }
                     break;
                 case "Up": 
                     engine.currentTetromino.Rotate();
@@ -109,12 +109,18 @@ namespace TetrisClient
             };
             desiredPosition.Position.Y++;
 
+            
+
             if (engine.MovePossible(desiredPosition))
             {
                 engine.currentTetromino.Position = desiredPosition.Position;
             }
             else {
-                engine.AddStuck();
+                if(!engine.AddStuck()) {
+                    timer.Stop();
+                    PauseButton.Visibility = Visibility.Hidden;
+                    System.Windows.MessageBox.Show("GAME OVER");
+                }
                 engine.SpawnTetromino();
             }
         }

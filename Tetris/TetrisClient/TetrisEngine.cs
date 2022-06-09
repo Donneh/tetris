@@ -36,6 +36,17 @@ namespace TetrisClient
 
         public void AddStuck()
         {
+            //for (var rowI = 0; rowI < playingGrid.Count; rowI++)
+            //{
+            //    for (var ColI = 0; ColI < playingGrid[rowI].Count; ColI++)
+            //    {
+
+            //        if (playingGrid[rowI][ColI] != 0)
+            //        {
+            //            Debug.WriteLine(rowI + "     " + ColI);
+            //        }
+            //    }
+            //}
             var tet = new Tetromino();
             tet.Shape = new Matrix(currentTetromino.Shape.Value);
             tet.Position = new System.Numerics.Vector2(currentTetromino.Position.X, currentTetromino.Position.Y);
@@ -54,7 +65,7 @@ namespace TetrisClient
 
                     var newYPos = (int)currentTetromino.Position.Y + yOffset - 1;
                     var newXPos = (int)currentTetromino.Position.X + xOffset;
-                    playingGrid[newYPos][ newXPos] = 1;
+                    playingGrid[newYPos][ newXPos] = shape[yOffset,xOffset];
                 }
             }
         }
@@ -62,6 +73,7 @@ namespace TetrisClient
         public bool MovePossible(Tetromino desiredPosition)
         {
             DrawInArray();
+
             var shape = desiredPosition.Shape.Value;
 
             for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
@@ -87,7 +99,7 @@ namespace TetrisClient
                     {
                         newYPos++;
                     }
-                    if (playingGrid[newYPos - 1][ newXPos] == 1)
+                    if (playingGrid[newYPos - 1][ newXPos] != 0)
                     {
                         return false;
                     }
@@ -123,7 +135,7 @@ namespace TetrisClient
                     {
                         newYPos++;
                     }
-                    if (playingGrid[newYPos - 1][ newXPos] == 1)
+                    if (playingGrid[newYPos - 1][ newXPos] != 0)
                     {
                         return false;
                     }
@@ -161,6 +173,7 @@ namespace TetrisClient
                 playingGrid.Remove(row);
                 playingGrid.Insert(0, row);
             }
+
             if (rowsToReplace.Count > 0)
             {
 
@@ -171,12 +184,6 @@ namespace TetrisClient
         }
 
 
-        //public void MoveDown(int row) {
-        //    for (var i = 0; i < playingGrid.Length; i++) {
-
-        //    }
-        //}
-
         public void DrawInArray()
         {
             foreach (var tetromino in stuckTetrominoes)
@@ -186,13 +193,13 @@ namespace TetrisClient
                 {
                     for (int j = 0; j < values.GetLength(1); j++)
                     {
-                        if (values[i, j] != 1)
+                        if (values[i, j] == 0)
                         {
                             continue;
                         }
 
-                        var rectangle = tetromino.ToRectangle();
-                        playingGrid[(int)(i + tetromino.Position.Y)][(int)(j + tetromino.Position.X)] = 1;
+                        
+                        playingGrid[(int)(i + tetromino.Position.Y)][(int)(j + tetromino.Position.X)] = values[i,j];
 
 
                     }
@@ -201,28 +208,7 @@ namespace TetrisClient
 
         }
 
-
-
-
-        public void printTetrominoPosition()
-        {
-            foreach (var tetro in stuckTetrominoes)
-            {
-                var shape = tetro.Shape.Value;
-
-                for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
-                {
-                    //y as van tetromino
-                    for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
-                    {
-                        if (shape[yOffset, xOffset] == 1)
-                        {
-                            Debug.WriteLine("y " + (tetro.Position.Y + yOffset) + "x " + (tetro.Position.X + xOffset));
-                        }
-                    }
-                }
-            }
-        }
+        
 
 
         public void RemoveTetrominoPart()
@@ -233,22 +219,22 @@ namespace TetrisClient
             var ColIndex = 0;
 
 
-            for (var rowI = 0; rowI < playingGrid.Count; rowI++)
-            {
-                for (var ColI = 0; ColI < playingGrid[rowI].Count; ColI++)
-                {
+            //for (var rowI = 0; rowI < playingGrid.Count; rowI++)
+            //{
+            //    for (var ColI = 0; ColI < playingGrid[rowI].Count; ColI++)
+            //    {
 
-                    if (playingGrid[rowI][ColI] == 1)
-                    {
-                        Debug.WriteLine(rowI + "     " + ColI);
-                    }
-                }
-            }
+            //        if (playingGrid[rowI][ColI] != 0)
+            //        {
+            //            Debug.WriteLine(rowI + "     " + ColI);
+            //        }
+            //    }
+            //}
 
 
 
             for (var y = 0; y < 2; y++)
-                {
+            {
                 rowIndex = 0;
                 for (var i = 0; i < 5; i++)
                 {
@@ -268,13 +254,6 @@ namespace TetrisClient
                     //}
                 }
                 ColIndex += 4;
-
-                //Debug.WriteLine(rowIndex + "       " + ColIndex);
-
-
-                //}
-
-                //}
             }
             rowIndex = 0;
             ColIndex = 8;
@@ -290,17 +269,14 @@ namespace TetrisClient
                 
                     }),
                 Position = new System.Numerics.Vector2(ColIndex,rowIndex),
-                Color=Brushes.AliceBlue
+                Color=Brushes.Blue
                 }); ;
 
-                Debug.WriteLine(rowIndex + "           " + ColIndex);
-                Debug.WriteLine(playingGrid[rowIndex][ColIndex] + " " + playingGrid[rowIndex][ColIndex + 1] + " " + playingGrid[rowIndex + 1][ColIndex] +" " + playingGrid[rowIndex + 1][ColIndex + 1]);
                 rowIndex += 2;
             }
             
-            stuckTetrominoes = tetrominos;           
-            prettyprint();
-            
+            stuckTetrominoes = tetrominos;
+
         }
 
         public void prettyprint()

@@ -40,8 +40,7 @@ namespace TetrisClient
         {
             TetrisGrid.Children.Clear();
             DrawCurrentTetromino();
-            DrawStuckTetrominoes();
-            //engine.DrawInArray();            
+            DrawStuckTetrominoes();                        
             MoveDown();          
             ;
         }

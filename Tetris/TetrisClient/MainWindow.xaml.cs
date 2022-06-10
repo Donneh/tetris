@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 using System.Windows.Threading;
 
 namespace TetrisClient
@@ -38,9 +40,8 @@ namespace TetrisClient
         {
             TetrisGrid.Children.Clear();
             DrawCurrentTetromino();
-            DrawStuckTetrominoes();
-            MoveDown();
-            engine.RemoveTetrominoPart();      
+            DrawStuckTetrominoes();                        
+            MoveDown();          
             ;
         }
         
@@ -85,7 +86,11 @@ namespace TetrisClient
                     }
                     desiredPosition.Position.Y--;
                     engine.currentTetromino.Position = desiredPosition.Position;
-                    engine.AddStuck();
+                    if (!engine.AddStuck()) {
+                        timer.Stop();
+                        PauseButton.Visibility = Visibility.Hidden;
+                        System.Windows.MessageBox.Show("GAME OVER");
+                    }
                     break;
                 case "Up": 
                     engine.currentTetromino.Rotate();
@@ -96,20 +101,42 @@ namespace TetrisClient
 
         private void MoveDown()
         {
-            var desiredPosition = new Tetromino();
-            desiredPosition.Shape = engine.currentTetromino.Shape;
-            desiredPosition.Position = engine.currentTetromino.Position;
+            var desiredPosition = new Tetromino
+            {
+                Shape = engine.currentTetromino.Shape,
+                Position = engine.currentTetromino.Position
+            };
             desiredPosition.Position.Y++;
+
+            
 
             if (engine.MovePossible(desiredPosition))
             {
                 engine.currentTetromino.Position = desiredPosition.Position;
             }
             else {
-                engine.AddStuck();
+                if(!engine.AddStuck()) {
+                    timer.Stop();
+                    PauseButton.Visibility = Visibility.Hidden;
+                    System.Windows.MessageBox.Show("GAME OVER");
+                }
                 engine.SpawnTetromino();
             }
         }
+
+        public static Brush GetColorFromCode(int code) => code switch
+        {
+            0 => Brushes.Black,
+            1 => Brushes.Aqua,
+            2 => Brushes.Blue,
+            3 => Brushes.Orange,
+            4 => Brushes.Yellow,
+            5 => Brushes.Lime,
+            6 => Brushes.Magenta,
+            7 => Brushes.Red,
+            8 => Brushes.Black,
+            _ => throw new ArgumentOutOfRangeException(nameof(code), $"Not expected code: {code}")
+        };
 
         private void DrawCurrentTetromino()
         {
@@ -118,9 +145,16 @@ namespace TetrisClient
             {
                 for (int j = 0; j < values.GetLength(1); j++)
                 {                    
-                    if (values[i, j] != 1) continue;
-                   
-                    var rectangle = engine.currentTetromino.ToRectangle();
+                    if (values[i, j] == 0) continue;
+                    var rectangle = new Rectangle()
+                    {
+                        Width = 25, // Breedte van een 'cell' in de Grid
+                        Height = 25, // Hoogte van een 'cell' in de Grid
+                        Stroke = Brushes.Black, // De rand
+                        StrokeThickness = 2.5, // Dikte van de rand
+                        Fill = GetColorFromCode(values[i,j]), // Achtergrondkleur
+                    };
+                    
                     
                     TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
                     Grid.SetRow(rectangle, (int)(i + engine.currentTetromino.Position.Y)); // Zet de rij
@@ -140,9 +174,16 @@ namespace TetrisClient
                     for (int j = 0; j < values.GetLength(1); j++)
                     {
                         
-                        if (values[i, j] != 1) continue;
+                        if (values[i, j] == 0) continue;
 
-                        var rectangle = tetromino.ToRectangle();
+                        var rectangle = new Rectangle()
+                        {
+                            Width = 25, // Breedte van een 'cell' in de Grid
+                            Height = 25, // Hoogte van een 'cell' in de Grid
+                            Stroke = Brushes.Black, // De rand
+                            StrokeThickness = 2.5, // Dikte van de rand
+                            Fill = GetColorFromCode(values[i, j]), // Achtergrondkleur
+                        };
 
                         TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
                         Grid.SetRow(rectangle, (int)(i + tetromino.Position.Y)); // Zet de rij

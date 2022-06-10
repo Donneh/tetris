@@ -19,7 +19,7 @@ namespace TetrisClient
         {
             return new int[,]{
                 { 0, 0, 0, 0},
-                { 1, 1, 1, 1},
+                { 2, 2, 2, 2},
                 { 0, 0, 0, 0},
                 { 0, 0, 0, 0} };
         }
@@ -28,8 +28,8 @@ namespace TetrisClient
         {
             return new int[,]
                 {
-                {0, 0, 1},
-                {1, 1, 1},
+                {0, 0, 3},
+                {3, 3, 3},
                 {0, 0, 0}
                 };
 
@@ -39,10 +39,8 @@ namespace TetrisClient
         {
             return new int[,]
                     {
-            {0, 1, 1, 0},
-            {0, 1, 1, 0},
-            {0, 0, 0, 0},
-            {0, 0, 0, 0}
+            {4, 4,},
+            {4, 4}
                     };
         }
 
@@ -50,8 +48,8 @@ namespace TetrisClient
         {
             return new int[,]
                         {
-                {0, 1, 1},
-                {1, 1, 0},
+                {0, 5, 5},
+                {5, 5, 0},
                 {0, 0, 0}
                         };
 
@@ -60,8 +58,8 @@ namespace TetrisClient
         private int[,] TShape()
         {
             return new int[,] {
-                {0, 1, 0},
-                {1, 1, 1},
+                {0, 6, 0},
+                {6, 6, 6},
                 {0, 0, 0}
             };
         }
@@ -71,8 +69,8 @@ namespace TetrisClient
 
             return new int[,] {
 
-                { 1, 1, 0 },
-                { 0, 1, 1 },
+                { 7, 7, 0 },
+                { 0, 7, 7 },
                 { 0, 0, 0 }
 
             };
@@ -128,30 +126,28 @@ namespace TetrisClient
         //})
 
 
-
-
-        private Brush[] Colors =
-           {
-            Brushes.Blue,
-            Brushes.Cyan,
-            Brushes.Orange,
-            Brushes.Yellow,
-            Brushes.Green,
-            Brushes.Purple,
-            Brushes.Red,
-        };
-
         public Tetromino GetRandomTetromino()
         {
             var Random = new Random();
-            //var randomInt = Random.Next(0, PossibleShapes.Length); 
-            var randomInt = 0;
+            var randomInt = Random.Next(0, 7); 
+            //var randomInt = 0;
             var tetromino = new Tetromino();
-            tetromino.Shape = new Matrix(LShape());
-            tetromino.Color = Colors[randomInt];
+            tetromino.Shape = GetRandomBLock(randomInt);
 
             return tetromino;
         }
+
+        public Matrix GetRandomBLock(int number) => number switch
+        {
+            0 => new Matrix(LShape()),
+            1 => new Matrix(IShape()),
+            2 => new Matrix(JShape()),
+            3 => new Matrix(OShape()),
+            4 => new Matrix(SShape()),
+            5 => new Matrix(TShape()),
+            6 => new Matrix(ZShape()),
+            _ => throw new ArgumentOutOfRangeException(nameof(number), $"Not expected code: {number}")
+        };
 
     };
 

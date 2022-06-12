@@ -40,6 +40,7 @@ namespace TetrisClient
         {
             TetrisGrid.Children.Clear();
             DrawCurrentTetromino();
+            DrawGhostPiece();
             DrawStuckTetrominoes();                        
             MoveDown();          
             ;
@@ -50,6 +51,7 @@ namespace TetrisClient
             
             switch (e.Key.ToString()) {
                 case "Right":
+                    DrawGhostPiece();
                     var desiredPosition = new Tetromino
                     {
                         Shape = engine.currentTetromino.Shape,
@@ -62,6 +64,7 @@ namespace TetrisClient
                     }
                     break;
                 case "Left":
+                    DrawGhostPiece();
                     desiredPosition = new Tetromino
                     {
                         Shape = engine.currentTetromino.Shape,
@@ -94,6 +97,7 @@ namespace TetrisClient
                     break;
                 case "Up": 
                     engine.currentTetromino.Rotate();
+                    engine.ghostPiece.Rotate(); 
                     break;
             }
                        
@@ -134,7 +138,7 @@ namespace TetrisClient
             5 => Brushes.Lime,
             6 => Brushes.Magenta,
             7 => Brushes.Red,
-            8 => Brushes.Black,
+            8 => Brushes.Gray,
             _ => throw new ArgumentOutOfRangeException(nameof(code), $"Not expected code: {code}")
         };
 
@@ -162,6 +166,45 @@ namespace TetrisClient
                 }
             }
             
+        }
+
+
+        private void DrawGhostPiece() 
+        {
+            
+            var desiredPosition = new Tetromino
+            {
+                Shape = engine.currentTetromino.Shape,
+                Position = engine.currentTetromino.Position
+            };
+            desiredPosition.Position.Y++;
+            while (engine.MovePossible(desiredPosition))
+            {
+                desiredPosition.Position.Y++;
+            }
+            desiredPosition.Position.Y--;
+            engine.ghostPiece.Position = desiredPosition.Position;
+            int[,] values = engine.ghostPiece.Shape.Value;
+            for (int i = 0; i < values.GetLength(0); i++)
+            {
+                for (int j = 0; j < values.GetLength(1); j++)
+                {
+                    if (values[i, j] == 0) continue;
+                    var rectangle = new Rectangle()
+                    {
+                        Width = 25, // Breedte van een 'cell' in de Grid
+                        Height = 25, // Hoogte van een 'cell' in de Grid
+                        Stroke = Brushes.Black, // De rand
+                        StrokeThickness = 2.5, // Dikte van de rand
+                        Fill = GetColorFromCode(8), // Achtergrondkleur
+                    };
+
+
+                    TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
+                    Grid.SetRow(rectangle, (int)(i + engine.ghostPiece.Position.Y)); // Zet de rij
+                    Grid.SetColumn(rectangle, (int)(j + engine.currentTetromino.Position.X)); // Zet de kolom
+                }
+            }
         }
 
         private void DrawStuckTetrominoes()

@@ -8,17 +8,23 @@ namespace TetrisClient
 {
     public class TetrisEngine
     {
-        
+
         private TetrominioService _tetrominioService = new TetrominioService();
         public Tetromino currentTetromino;
+        public Tetromino ghostPiece;
         public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
-        public readonly int dropSpeedInMilliSeconds = 100;
+        public readonly int dropSpeedInMilliSeconds = 150;
         public List<List<int>> playingGrid = new List<List<int>>(20);
 
         public TetrisEngine()
         {
             currentTetromino = _tetrominioService.GetRandomTetromino();
-            
+            ghostPiece = new Tetromino
+            {
+                Shape = new Matrix(currentTetromino.Shape.Value),
+                Position = new System.Numerics.Vector2(currentTetromino.Position.X, currentTetromino.Position.Y+18),
+                Color = Brushes.Gray
+            };
             for (var i = 0; i < 20; i++)
             {
                 playingGrid.Add(Enumerable.Repeat(0, 10).ToList());
@@ -32,10 +38,16 @@ namespace TetrisClient
         {
             ClearLines();
             currentTetromino = _tetrominioService.GetRandomTetromino();
+            ghostPiece = new Tetromino
+            {
+                Shape = new Matrix(currentTetromino.Shape.Value),
+                Position = new System.Numerics.Vector2(currentTetromino.Position.X, currentTetromino.Position.Y+3),
+                Color = currentTetromino.Color
+            };
         }
 
         public bool AddStuck()
-        {          
+        {
             var tet = new Tetromino
             {
                 Shape = new Matrix(currentTetromino.Shape.Value),
@@ -67,9 +79,11 @@ namespace TetrisClient
                         return false;
                     }
                 }
-            }
+            }            
             return true;
         }
+
+       
 
         public bool MovePossible(Tetromino desiredPosition)
         {

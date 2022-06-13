@@ -13,8 +13,11 @@ namespace TetrisClient
         public Tetromino currentTetromino;
         public Tetromino ghostPiece;
         public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
-        public readonly int dropSpeedInMilliSeconds = 150;
+        public  double dropSpeed = 1;
         public List<List<int>> playingGrid = new List<List<int>>(20);
+        public int clearedLines = 0;
+        public int level = 1;
+        public bool levelChanged;
 
         public TetrisEngine()
         {
@@ -29,7 +32,6 @@ namespace TetrisClient
             {
                 playingGrid.Add(Enumerable.Repeat(0, 10).ToList());
             }
-
         }
 
 
@@ -195,7 +197,7 @@ namespace TetrisClient
             foreach (var row in rowsToReplace)
             {
                 //prettyprint();
-                Debug.WriteLine("TEST");
+                clearedLines++;
                 playingGrid.Remove(row);
                 playingGrid.Insert(0, row);
                 //prettyprint();
@@ -207,13 +209,23 @@ namespace TetrisClient
                 RemoveTetrominoPart();
             }
 
-
+            SetDropspeed(clearedLines);
         }
 
 
-        
 
-        
+        public void SetDropspeed(int clearedLines) 
+        {
+            var tvar = (clearedLines / 5) + 1;
+            if (tvar > level)
+            {
+                levelChanged = true;
+                level = (clearedLines / 5) + 1;
+                dropSpeed = Math.Pow(0.8 - ((level - 1) * 0.007), (level - 1));
+                Debug.WriteLine(dropSpeed);
+            }
+        }
+
 
 
         public void RemoveTetrominoPart()

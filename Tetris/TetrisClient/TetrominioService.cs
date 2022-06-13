@@ -132,7 +132,7 @@ namespace TetrisClient
             var randomInt = Random.Next(0, 7); 
             //var randomInt = 0;
             var tetromino = new Tetromino();
-            tetromino.Shape = GetRandomBLock(randomInt);
+            tetromino.Shape = GetRandomBLock(3);
 
             return tetromino;
         }

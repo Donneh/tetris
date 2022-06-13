@@ -32,17 +32,22 @@ namespace TetrisClient
         {
             timer = new DispatcherTimer();
             timer.Tick += new EventHandler(GameTick);
-            timer.Interval = new TimeSpan(0, 0,0, 0, engine.dropSpeedInMilliSeconds);
+            timer.Interval = TimeSpan.FromSeconds(engine.dropSpeed);
             timer.Start();
         }
 
         private void GameTick(object sender, EventArgs e)
         {
-            TetrisGrid.Children.Clear();
+            TetrisGrid.Children.Clear(); 
+            DrawGhostPiece(); 
             DrawCurrentTetromino();
-            DrawGhostPiece();
-            DrawStuckTetrominoes();                        
-            MoveDown();          
+            DrawStuckTetrominoes();                     
+            MoveDown();
+            if (engine.levelChanged) {
+                levelTxt.Text = "Level: " + engine.level;
+                timer.Interval = TimeSpan.FromSeconds(engine.dropSpeed);
+                engine.levelChanged = false;
+            }
             ;
         }
         

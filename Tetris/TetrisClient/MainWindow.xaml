@@ -5,10 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TetrisClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="500" ResizeMode="NoResize">
+        Title="MainWindow" Height="900" Width="500" ResizeMode="NoResize">
 
     <Grid Background="Gray">
-        <Grid x:Name="TetrisGrid"  Focusable="True" Panel.ZIndex="2" KeyDown="MoveObject" Loaded="OnGridLoaded" Background="black" Margin="58,74,178,88" >
+        <Grid x:Name="TetrisGrid"  Focusable="True" Panel.ZIndex="2" KeyDown="MoveObject" Loaded="OnGridLoaded" Background="black" Margin="58,74,178,88" Height="900" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>

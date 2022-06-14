@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 
 namespace TetrisServer.Hubs
@@ -23,6 +24,11 @@ namespace TetrisServer.Hubs
         public async Task ReadyUp(int seed)
         {
             await Clients.Others.SendAsync("ReadyUp", seed);
+        }
+
+        public async Task UpdateGrid(List<List<int>> grid)
+        {
+            await Clients.Others.SendAsync("UpdateGrid", grid);
         }
     }
 }

@@ -20,7 +20,8 @@ namespace TetrisClient
         public MainWindow()
         {
             InitializeComponent();
-            engine = new TetrisEngine();
+            var seed =  Guid.NewGuid().GetHashCode();
+            engine = new TetrisEngine(seed);
             StartGameLoop();
         }
 
@@ -48,7 +49,6 @@ namespace TetrisClient
                 timer.Interval = TimeSpan.FromSeconds(engine.dropSpeed);
                 engine.levelChanged = false;
             }
-            ;
         }
         
         private void MoveObject(object sender, KeyEventArgs e)

@@ -18,10 +18,12 @@ namespace TetrisClient
         public int clearedLines = 0;
         public int level = 1;
         public bool levelChanged;
+        public int randomSeed;
 
-        public TetrisEngine()
+        public TetrisEngine(int seed)
         {
-            currentTetromino = _tetrominioService.GetRandomTetromino();
+            randomSeed = seed;
+            currentTetromino = _tetrominioService.GetRandomTetromino(randomSeed);
             ghostPiece = new Tetromino
             {
                 Shape = new Matrix(currentTetromino.Shape.Value),
@@ -34,12 +36,10 @@ namespace TetrisClient
             }
         }
 
-
-
         public void SpawnTetromino()
         {
             ClearLines();
-            currentTetromino = _tetrominioService.GetRandomTetromino();
+            currentTetromino = _tetrominioService.GetRandomTetromino(randomSeed);
             ghostPiece = new Tetromino
             {
                 Shape = new Matrix(currentTetromino.Shape.Value),

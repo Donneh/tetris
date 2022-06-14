@@ -126,13 +126,13 @@ namespace TetrisClient
         //})
 
 
-        public Tetromino GetRandomTetromino()
+        public Tetromino GetRandomTetromino(int seed)
         {
-            var Random = new Random();
+            var Random = new Random(seed);
             var randomInt = Random.Next(0, 7); 
-            //var randomInt = 0;
+            
             var tetromino = new Tetromino();
-            tetromino.Shape = GetRandomBLock(3);
+            tetromino.Shape = GetRandomBLock(randomInt);
 
             return tetromino;
         }

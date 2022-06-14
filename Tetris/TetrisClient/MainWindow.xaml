@@ -46,7 +46,7 @@
         </Grid>
 
 
-        <TextBlock x:Name="levelTxt" VerticalAlignment="Top"   TextWrapping="Wrap" Height="35" Width="170" Foreground="#FFFFF161" FontSize="20" FontFamily="Showcard Gothic" TextAlignment="Center" Background="Black" Text="Level: 0"/>
+        <TextBlock x:Name="levelTxt" VerticalAlignment="Top"   TextWrapping="Wrap" Height="35" Width="170" Foreground="#FFFFF161" FontSize="20" FontFamily="Showcard Gothic" TextAlignment="Center" Background="Black" Text="Level: 1"/>
         <Button x:Name="PauseButton" Content="Pause" HorizontalAlignment="Left" Margin="374,178,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.301,0.628" Height="48" Width="97" Click="PauseClick" Focusable="False"/>
 
     </Grid>

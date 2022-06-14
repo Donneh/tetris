@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MultiplayerWindow" Height="600" Width="765">
     <Grid Background="Gray" Margin="0,0,0,-69" >
-        <Grid x:Name="TetrisGrid"  Focusable="True" Panel.ZIndex="2" KeyDown="MoveObject" Loaded="OnGridLoaded" Background="black" Width="250" Height="500" Margin="24,54,491,30" >
+        <Grid x:Name="TetrisGrid"  Focusable="True" Panel.ZIndex="2" KeyDown="MoveObject" Loaded="OnGridLoaded" Background="black" Height="500" Margin="24,89,476,64" >
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
@@ -45,9 +45,9 @@
             </Grid.ColumnDefinitions>
         </Grid>
 
-        <Button Content="Invoke ReadyUp message" Click="StartGame_OnClick" Margin="294,400,293,158" Panel.ZIndex="2"></Button>
-        <TextBlock x:Name="levelTxt" VerticalAlignment="Top"   TextWrapping="Wrap" Height="35" Width="170" Foreground="#FFFFF161" FontSize="20" FontFamily="Showcard Gothic" TextAlignment="Center" Background="Black" Text="Level: 0" Margin="64,0,531,0"/>
-        <Grid x:Name="PlayerTwoGrid" Background="black" Width="250" Height="500" Margin="490,54,25,30">
+        <Button Content="Invoke ReadyUp message" Click="StartGame_OnClick" Margin="294,400,293,158" Panel.ZIndex="2" Focusable="False"></Button>
+        <TextBlock x:Name="levelTxt" VerticalAlignment="Top"   TextWrapping="Wrap" Height="35" Width="170" Foreground="#FFFFF161" FontSize="20" FontFamily="Showcard Gothic" TextAlignment="Center" Background="Black" Text="Level: 0" Margin="64,0,531,0" />
+        <Grid x:Name="PlayerTwoGrid" Background="black" Height="500" Margin="490,89,10,64">
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
                 <RowDefinition Height="25"/>

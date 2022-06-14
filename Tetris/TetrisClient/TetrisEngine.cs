@@ -9,7 +9,7 @@ namespace TetrisClient
     public class TetrisEngine
     {
 
-        private TetrominoService tetrominoService = new TetrominoService();
+        private TetrominoService tetrominoService;
         public Tetromino currentTetromino;
         public Tetromino ghostPiece;
         public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
@@ -23,6 +23,7 @@ namespace TetrisClient
         public TetrisEngine(int seed)
         {
             randomSeed = seed;
+            tetrominoService = new TetrominoService(randomSeed);
             currentTetromino = tetrominoService.GetRandomTetromino(randomSeed);
             ghostPiece = new Tetromino
             {

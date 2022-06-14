@@ -4,6 +4,8 @@ namespace TetrisClient
 {
     public class TetrominoService
     {
+        private readonly Random random;
+
         private int[,] LShape()
         {
             return new int[,]
@@ -76,9 +78,14 @@ namespace TetrisClient
 
         }
 
+        public TetrominoService(int seed)
+        {
+            random = new Random(seed);
+        }
+
         public Tetromino GetRandomTetromino(int seed)
         {
-            var randomInt = new Random(seed).Next(0, 7);
+            var randomInt = random.Next(0, 7);
                 
             return new Tetromino
             {

@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Windows.Media;
 
 namespace TetrisClient
 {
-    public class TetrominioService
+    public class TetrominoService
     {
         private int[,] LShape()
         {
@@ -77,67 +76,17 @@ namespace TetrisClient
 
         }
 
-
-
-        //{
-        //new(new int[,]
-        //{
-        //    {1, 0, 0},
-        //    {1, 1, 1},
-        //    {0, 0, 0},                
-        //}),
-        //new(new int[,]
-        //{
-        //    {0, 0, 0, 0},
-        //    {1, 1, 1, 1},
-        //    {0, 0, 0, 0},
-        //    {0, 0, 0, 0}
-        //}),
-        //new(new int[,]
-        //{
-        //    {0, 0, 1},
-        //    {1, 1, 1},
-        //    {0, 0, 0}
-        //}),
-        //new(new int[,]
-        //{
-        //    {0, 1, 1, 0},
-        //    {0, 1, 1, 0},
-        //    {0, 0, 0, 0},
-        //    {0, 0, 0, 0}
-        //}),
-        //new(new int[,]
-        //{
-        //    {0, 1, 1},
-        //    {1, 1, 0},
-        //    {0, 0, 0}
-        //}),
-        //new(new int[,]
-        //{
-        //    {0, 1, 0},
-        //    {1, 1, 1},
-        //    {0, 0, 0}
-        //}),
-        //new(new int[,]
-        //{
-        //    { 1, 1, 0 },
-        //    { 0, 1, 1 },
-        //    { 0, 0, 0 }
-        //})
-
-
         public Tetromino GetRandomTetromino(int seed)
         {
-            var Random = new Random(seed);
-            var randomInt = Random.Next(0, 7); 
-            
-            var tetromino = new Tetromino();
-            tetromino.Shape = GetRandomBLock(randomInt);
-
-            return tetromino;
+            var randomInt = new Random(seed).Next(0, 7);
+                
+            return new Tetromino
+            {
+                Shape = GetRandomBLock(randomInt)
+            };
         }
 
-        public Matrix GetRandomBLock(int number) => number switch
+        private Matrix GetRandomBLock(int number) => number switch
         {
             0 => new Matrix(LShape()),
             1 => new Matrix(IShape()),

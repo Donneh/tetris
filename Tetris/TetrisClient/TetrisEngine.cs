@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
 using System.Windows.Media;
 
 namespace TetrisClient
@@ -17,19 +18,18 @@ namespace TetrisClient
         private int clearedLines;
         public int Level = 1;
         public bool LevelChanged;
-        private readonly int randomSeed;
 
         public TetrisEngine(int seed)
         {
-            randomSeed = seed;
-            tetrominoService = new TetrominoService(randomSeed);
-            CurrentTetromino = tetrominoService.GetRandomTetromino(randomSeed);
+            tetrominoService = new TetrominoService(seed);
+            CurrentTetromino = tetrominoService.GetRandomTetromino();
             GhostPiece = new Tetromino
             {
                 Shape = new Matrix(CurrentTetromino.Shape.Value),
-                Position = new System.Numerics.Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y + 18),
+                Position = new Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y + 18),
                 Color = Brushes.Gray
             };
+            
             for (var i = 0; i < 20; i++)
             {
                 PlayingGrid.Add(Enumerable.Repeat(0, 10).ToList());
@@ -39,11 +39,11 @@ namespace TetrisClient
         public void SpawnTetromino()
         {
             ClearLines();
-            CurrentTetromino = tetrominoService.GetRandomTetromino(randomSeed);
+            CurrentTetromino = tetrominoService.GetRandomTetromino();
             GhostPiece = new Tetromino
             {
                 Shape = new Matrix(CurrentTetromino.Shape.Value),
-                Position = new System.Numerics.Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y + 3),
+                Position = new Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y + 3),
                 Color = CurrentTetromino.Color
             };
         }
@@ -53,7 +53,7 @@ namespace TetrisClient
             var tet = new Tetromino
             {
                 Shape = new Matrix(CurrentTetromino.Shape.Value),
-                Position = new System.Numerics.Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y),
+                Position = new Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y),
                 Color = CurrentTetromino.Color
             };
             StuckTetrominoes.Add(tet);
@@ -142,7 +142,7 @@ namespace TetrisClient
 
                     var newYPos = (int) (desiredPosition.Position.Y + yOffset);
                     var newXPos = (int) (desiredPosition.Position.X + xOffset);
-                    if (newXPos < 0 || (newXPos + 1) > (PlayingGrid[0].Count()))
+                    if (newXPos < 0 || (newXPos + 1) > (PlayingGrid[0].Count))
                     {
                         return false;
                     }
@@ -276,7 +276,6 @@ namespace TetrisClient
                     Position = new System.Numerics.Vector2(ColIndex, rowIndex),
                     Color = Brushes.Blue
                 });
-                ;
 
                 rowIndex += 2;
             }

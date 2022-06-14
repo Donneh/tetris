@@ -116,9 +116,7 @@ namespace TetrisClient
                 Position = engine.CurrentTetromino.Position
             };
             desiredPosition.Position.Y++;
-
             
-
             if (engine.MovePossible(desiredPosition))
             {
                 engine.CurrentTetromino.Position = desiredPosition.Position;

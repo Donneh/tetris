@@ -83,7 +83,7 @@ namespace TetrisClient
             random = new Random(seed);
         }
 
-        public Tetromino GetRandomTetromino(int seed)
+        public Tetromino GetRandomTetromino()
         {
             var randomInt = random.Next(0, 7);
                 

@@ -19,7 +19,7 @@ namespace TetrisClient
 
         public MainWindow()
         {
-            InitializeComponent();            
+            InitializeComponent();
             engine = new TetrisEngine();
             StartGameLoop();
         }

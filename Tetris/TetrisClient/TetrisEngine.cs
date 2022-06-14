@@ -8,44 +8,43 @@ namespace TetrisClient
 {
     public class TetrisEngine
     {
-
-        private TetrominoService tetrominoService;
-        public Tetromino currentTetromino;
-        public Tetromino ghostPiece;
-        public List<Tetromino> stuckTetrominoes = new List<Tetromino>();
-        public  double dropSpeed = 1;
-        public List<List<int>> playingGrid = new List<List<int>>(20);
-        public int clearedLines = 0;
-        public int level = 1;
-        public bool levelChanged;
-        public int randomSeed;
+        private readonly TetrominoService tetrominoService;
+        public Tetromino CurrentTetromino;
+        public Tetromino GhostPiece;
+        public List<Tetromino> StuckTetrominoes = new List<Tetromino>();
+        public double DropSpeed = 1;
+        public readonly List<List<int>> PlayingGrid = new List<List<int>>(20);
+        private int clearedLines;
+        public int Level = 1;
+        public bool LevelChanged;
+        private readonly int randomSeed;
 
         public TetrisEngine(int seed)
         {
             randomSeed = seed;
             tetrominoService = new TetrominoService(randomSeed);
-            currentTetromino = tetrominoService.GetRandomTetromino(randomSeed);
-            ghostPiece = new Tetromino
+            CurrentTetromino = tetrominoService.GetRandomTetromino(randomSeed);
+            GhostPiece = new Tetromino
             {
-                Shape = new Matrix(currentTetromino.Shape.Value),
-                Position = new System.Numerics.Vector2(currentTetromino.Position.X, currentTetromino.Position.Y+18),
+                Shape = new Matrix(CurrentTetromino.Shape.Value),
+                Position = new System.Numerics.Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y + 18),
                 Color = Brushes.Gray
             };
             for (var i = 0; i < 20; i++)
             {
-                playingGrid.Add(Enumerable.Repeat(0, 10).ToList());
+                PlayingGrid.Add(Enumerable.Repeat(0, 10).ToList());
             }
         }
 
         public void SpawnTetromino()
         {
             ClearLines();
-            currentTetromino = tetrominoService.GetRandomTetromino(randomSeed);
-            ghostPiece = new Tetromino
+            CurrentTetromino = tetrominoService.GetRandomTetromino(randomSeed);
+            GhostPiece = new Tetromino
             {
-                Shape = new Matrix(currentTetromino.Shape.Value),
-                Position = new System.Numerics.Vector2(currentTetromino.Position.X, currentTetromino.Position.Y+3),
-                Color = currentTetromino.Color
+                Shape = new Matrix(CurrentTetromino.Shape.Value),
+                Position = new System.Numerics.Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y + 3),
+                Color = CurrentTetromino.Color
             };
         }
 
@@ -53,11 +52,11 @@ namespace TetrisClient
         {
             var tet = new Tetromino
             {
-                Shape = new Matrix(currentTetromino.Shape.Value),
-                Position = new System.Numerics.Vector2(currentTetromino.Position.X, currentTetromino.Position.Y),
-                Color = currentTetromino.Color
+                Shape = new Matrix(CurrentTetromino.Shape.Value),
+                Position = new System.Numerics.Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y),
+                Color = CurrentTetromino.Color
             };
-            stuckTetrominoes.Add(tet);
+            StuckTetrominoes.Add(tet);
             var shape = tet.Shape.Value;
 
             for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
@@ -69,46 +68,44 @@ namespace TetrisClient
                         continue;
                     }
 
-                    var newYPos = (int)currentTetromino.Position.Y + yOffset;
-                    var newXPos = (int)currentTetromino.Position.X + xOffset;
+                    var newYPos = (int) CurrentTetromino.Position.Y + yOffset;
+                    var newXPos = (int) CurrentTetromino.Position.X + xOffset;
                     //Debug.WriteLine(newYPos);
                     if (newYPos > 0)
                     {
                         //prettyprint();
-                        playingGrid[newYPos][newXPos] = shape[yOffset, xOffset];
+                        PlayingGrid[newYPos][newXPos] = shape[yOffset, xOffset];
                         //prettyprint();
                     }
-                    else {
+                    else
+                    {
                         return false;
                     }
                 }
-            }            
+            }
+
             return true;
         }
 
-       
 
         public bool MovePossible(Tetromino desiredPosition)
         {
-            
-            
             var shape = desiredPosition.Shape.Value;
 
             for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
             {
                 for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
                 {
-                    
                     if (shape[yOffset, xOffset] == 0)
                     {
                         continue;
                     }
 
 
-                    var newYPos = (int)(desiredPosition.Position.Y + yOffset);
-                    var newXPos = (int)(desiredPosition.Position.X + xOffset);
-                    
-                    if (newYPos > playingGrid.Count-1)
+                    var newYPos = (int) (desiredPosition.Position.Y + yOffset);
+                    var newXPos = (int) (desiredPosition.Position.X + xOffset);
+
+                    if (newYPos > PlayingGrid.Count - 1)
                     {
                         return false;
                     }
@@ -120,11 +117,10 @@ namespace TetrisClient
                     }
 
 
-                    if (playingGrid[newYPos][newXPos] != 0)
+                    if (PlayingGrid[newYPos][newXPos] != 0)
                     {
                         return false;
                     }
-
                 }
             }
 
@@ -133,51 +129,46 @@ namespace TetrisClient
 
         public bool SideMovePossible(Tetromino desiredPosition)
         {
-            
             var shape = desiredPosition.Shape.Value;
 
             for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
             {
                 for (var xOffset = 0; xOffset < shape.GetLength(1); xOffset++)
                 {
-                    
                     if (shape[yOffset, xOffset] == 0)
                     {
                         continue;
                     }
 
-                    var newYPos = (int)(desiredPosition.Position.Y + yOffset);
-                    var newXPos = (int)(desiredPosition.Position.X + xOffset);
-                    if (newXPos < 0 || (newXPos + 1) > (playingGrid[0].Count()))
+                    var newYPos = (int) (desiredPosition.Position.Y + yOffset);
+                    var newXPos = (int) (desiredPosition.Position.X + xOffset);
+                    if (newXPos < 0 || (newXPos + 1) > (PlayingGrid[0].Count()))
                     {
-
                         return false;
                     }
+
                     if (newYPos == 0)
                     {
                         newYPos++;
                     }
 
 
-                    
-                    if (playingGrid[newYPos - 1][ newXPos] != 0)
+                    if (PlayingGrid[newYPos - 1][newXPos] != 0)
                     {
                         return false;
                     }
                 }
             }
+
             return true;
         }
 
-        public void ClearLines()
+        private void ClearLines()
         {
-            
-
-
             var rowsToReplace = new List<List<int>>();
-            for (var rowIndex = 0; rowIndex < playingGrid.Count; rowIndex++)
+            for (var rowIndex = 0; rowIndex < PlayingGrid.Count; rowIndex++)
             {
-                var row = playingGrid[rowIndex];
+                var row = PlayingGrid[rowIndex];
 
                 // check if row is full
                 if (!row.Contains(0))
@@ -190,23 +181,19 @@ namespace TetrisClient
 
                     // add row to list
                     rowsToReplace.Add(row);
-
                 }
             }
 
             // process full rows - delete it from current position and insert on top
             foreach (var row in rowsToReplace)
             {
-                //prettyprint();
                 clearedLines++;
-                playingGrid.Remove(row);
-                playingGrid.Insert(0, row);
-                //prettyprint();
+                PlayingGrid.Remove(row);
+                PlayingGrid.Insert(0, row);
             }
 
             if (rowsToReplace.Count > 0)
             {
-                //prettyprint();
                 RemoveTetrominoPart();
             }
 
@@ -214,19 +201,17 @@ namespace TetrisClient
         }
 
 
-
-        public void SetDropspeed(int clearedLines) 
+        public void SetDropspeed(int clearedLines)
         {
             var tvar = (clearedLines / 5) + 1;
-            if (tvar > level)
+            if (tvar > Level)
             {
-                levelChanged = true;
-                level = (clearedLines / 5) + 1;
-                dropSpeed = Math.Pow(0.8 - ((level - 1) * 0.007), (level - 1));
-                Debug.WriteLine(dropSpeed);
+                LevelChanged = true;
+                Level = (clearedLines / 5) + 1;
+                DropSpeed = Math.Pow(0.8 - ((Level - 1) * 0.007), (Level - 1));
+                Debug.WriteLine(DropSpeed);
             }
         }
-
 
 
         public void RemoveTetrominoPart()
@@ -236,21 +221,6 @@ namespace TetrisClient
             var rowIndex = 0;
             var ColIndex = 0;
 
-
-            //for (var rowI = 0; rowI < playingGrid.Count; rowI++)
-            //{
-            //    for (var ColI = 0; ColI < playingGrid[rowI].Count; ColI++)
-            //    {
-
-            //        if (playingGrid[rowI][ColI] != 0)
-            //        {
-            //            //Debug.WriteLine(rowI + "     " + ColI);
-            //        }
-            //    }
-            //}
-
-
-
             for (var y = 0; y < 2; y++)
             {
                 rowIndex = 0;
@@ -259,20 +229,36 @@ namespace TetrisClient
                     //for (var y = 0; y < 4; y++) {
                     tetrominos.Add(new Tetromino
                     {
-                        Shape = new Matrix(new int[,] {
-                                        { playingGrid[rowIndex][ColIndex], playingGrid[rowIndex][ColIndex + 1], playingGrid[rowIndex][ColIndex + 2], playingGrid[rowIndex][ColIndex + 3] },
-                                        { playingGrid[rowIndex + 1][ColIndex], playingGrid[rowIndex + 1][ColIndex + 1], playingGrid[rowIndex + 1][ColIndex + 2], playingGrid[rowIndex + 1][ColIndex + 3]},
-                                        { playingGrid[rowIndex + 2][ColIndex], playingGrid[rowIndex + 2][ColIndex + 1], playingGrid[rowIndex + 2][ColIndex + 2], playingGrid[rowIndex + 2][ColIndex + 3] },
-                                        { playingGrid[rowIndex + 3][ColIndex], playingGrid[rowIndex + 3][ColIndex + 1], playingGrid[rowIndex + 3][ColIndex + 2], playingGrid[rowIndex + 3][ColIndex + 3] }})
-                        ,
+                        Shape = new Matrix(new int[,]
+                        {
+                            {
+                                PlayingGrid[rowIndex][ColIndex], PlayingGrid[rowIndex][ColIndex + 1],
+                                PlayingGrid[rowIndex][ColIndex + 2], PlayingGrid[rowIndex][ColIndex + 3]
+                            },
+                            {
+                                PlayingGrid[rowIndex + 1][ColIndex], PlayingGrid[rowIndex + 1][ColIndex + 1],
+                                PlayingGrid[rowIndex + 1][ColIndex + 2], PlayingGrid[rowIndex + 1][ColIndex + 3]
+                            },
+                            {
+                                PlayingGrid[rowIndex + 2][ColIndex], PlayingGrid[rowIndex + 2][ColIndex + 1],
+                                PlayingGrid[rowIndex + 2][ColIndex + 2], PlayingGrid[rowIndex + 2][ColIndex + 3]
+                            },
+                            {
+                                PlayingGrid[rowIndex + 3][ColIndex], PlayingGrid[rowIndex + 3][ColIndex + 1],
+                                PlayingGrid[rowIndex + 3][ColIndex + 2], PlayingGrid[rowIndex + 3][ColIndex + 3]
+                            }
+                        }),
                         Color = Brushes.Blue,
-                        Position = new System.Numerics.Vector2(ColIndex,rowIndex)
-                    }); ;
+                        Position = new System.Numerics.Vector2(ColIndex, rowIndex)
+                    });
+                    ;
                     rowIndex += 4;
                     //}
                 }
+
                 ColIndex += 4;
             }
+
             rowIndex = 0;
             ColIndex = 8;
 
@@ -280,48 +266,35 @@ namespace TetrisClient
             {
                 tetrominos.Add(new Tetromino
                 {
-                    Shape = new Matrix(new int[,] {
-                                        { playingGrid[rowIndex][ColIndex], playingGrid[rowIndex][ColIndex + 1] },
-                                        { playingGrid[rowIndex + 1][ColIndex], playingGrid[rowIndex + 1][ColIndex + 1]
+                    Shape = new Matrix(new int[,]
+                    {
+                        {PlayingGrid[rowIndex][ColIndex], PlayingGrid[rowIndex][ColIndex + 1]},
+                        {
+                            PlayingGrid[rowIndex + 1][ColIndex], PlayingGrid[rowIndex + 1][ColIndex + 1]
                         }
-                
                     }),
-                Position = new System.Numerics.Vector2(ColIndex,rowIndex),
-                Color=Brushes.Blue
-                }); ;
+                    Position = new System.Numerics.Vector2(ColIndex, rowIndex),
+                    Color = Brushes.Blue
+                });
+                ;
 
                 rowIndex += 2;
             }
-            
-            stuckTetrominoes = tetrominos;
-            
+
+            StuckTetrominoes = tetrominos;
         }
 
         public void prettyprint()
         {
-            for (int i = 0; i < playingGrid.Count; i++)
+            for (int i = 0; i < PlayingGrid.Count; i++)
             {
-                for (int j = 0; j < playingGrid[0].Count; j++)
+                for (int j = 0; j < PlayingGrid[0].Count; j++)
                 {
-                    Debug.Write(string.Format("{0} ", playingGrid[i][j]));
+                    Debug.Write(string.Format("{0} ", PlayingGrid[i][j]));
                 }
+
                 Debug.Write(Environment.NewLine + Environment.NewLine);
             }
-            
-            //foreach (var tet in stuckTetrominoes)
-            //{
-            //    for (int i = 0; i < tet.Shape.Value.GetLength(0); i++)
-            //    {
-            //        for (int j = 0; j < tet.Shape.Value.GetLength(0); j++)
-            //        {
-            //            Debug.Write(string.Format("{0} ", tet.Shape.Value[i, j]));
-            //        }
-            //        Debug.Write(Environment.NewLine + Environment.NewLine);
-            //    }
-            //    //Console.ReadLine();}
-            //}
-
-
         }
     }
-    }
+}

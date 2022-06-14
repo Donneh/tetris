@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using System.Windows.Media;
+using System.Windows.Threading;
 using Microsoft.AspNetCore.SignalR.Client;
 
 namespace TetrisClient
@@ -18,6 +19,7 @@ namespace TetrisClient
         private Random P2Random;
 
         private TetrisEngine _engine;
+        private DispatcherTimer timer;
         
         public MultiplayerWindow()
         {
@@ -37,7 +39,7 @@ namespace TetrisClient
             // Op deze manier loopt het onderstaande gelijk met de methode in TetrisHub.cs.
             _connection.On<int>("ReadyUp", seed =>
             {
-                _engine = new TetrisEngine(seed);
+                // 
             });
 
             _connection.On<List<List<int>>>("UpdateGrid", grid =>
@@ -66,17 +68,12 @@ namespace TetrisClient
             int seed = Guid.NewGuid().GetHashCode();
             
             P1Random = new Random(seed);
-
+            
+            _engine = new TetrisEngine(seed);
+            StartGameLoop();
             // Het aanroepen van de TetrisHub.cs methode `ReadyUp`.
             // Hier geven we de int mee die de methode `ReadyUp` verwacht.
             await _connection.InvokeAsync("ReadyUp", seed);
-
-            await _connection.InvokeAsync("UpdateGrid", _engine.playingGrid);
-        }
-
-        private void MoveObject(object sender, KeyEventArgs e)
-        {
-            Debug.WriteLine("MoveObject()");
         }
 
         private void OnGridLoaded(object sender, RoutedEventArgs e)
@@ -118,6 +115,211 @@ namespace TetrisClient
                     target.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
                     Grid.SetRow(rectangle, row); // Zet de rij
                     Grid.SetColumn(rectangle, col); // Zet de kolom
+                }
+            }
+        }
+        
+        private void StartGameLoop()
+        {
+            timer = new DispatcherTimer();
+            timer.Tick += new EventHandler(GameTick);
+            timer.Interval = TimeSpan.FromSeconds(_engine.dropSpeed);
+            timer.Start();
+        }
+
+        private void GameTick(object sender, EventArgs e)
+        {
+            TetrisGrid.Children.Clear(); 
+            DrawCurrentTetromino();
+            DrawGhostPiece(); 
+            DrawStuckTetrominoes();                     
+            MoveDown();
+            if (_engine.levelChanged) {
+                levelTxt.Text = "Level: " + _engine.level;
+                timer.Interval = TimeSpan.FromSeconds(_engine.dropSpeed);
+                _engine.levelChanged = false;
+            }
+
+            SendBoard();
+        }
+
+        private async void SendBoard()
+        {
+            await _connection.InvokeAsync("UpdateGrid", _engine.playingGrid);
+        }
+
+        private void MoveObject(object sender, KeyEventArgs e)
+        {
+            switch (e.Key.ToString()) {
+                case "Right":
+                    DrawGhostPiece();
+                    var desiredPosition = new Tetromino
+                    {
+                        Shape = _engine.currentTetromino.Shape,
+                        Position = _engine.currentTetromino.Position
+                    };
+                    desiredPosition.Position.X++;
+                    if (_engine.SideMovePossible(desiredPosition))
+                    {
+                        _engine.currentTetromino.Position = desiredPosition.Position;
+                    }
+                    break;
+                case "Left":
+                    DrawGhostPiece();
+                    desiredPosition = new Tetromino
+                    {
+                        Shape = _engine.currentTetromino.Shape,
+                        Position = _engine.currentTetromino.Position
+                    };
+                    desiredPosition.Position.X--;
+                    if (_engine.SideMovePossible(desiredPosition))
+                    {
+                        _engine.currentTetromino.Position = desiredPosition.Position;
+                    }
+                    break;
+                case "Down":
+                    desiredPosition = new Tetromino
+                    {
+                        Shape = _engine.currentTetromino.Shape,
+                        Position = _engine.currentTetromino.Position
+                    };
+                    desiredPosition.Position.Y++;
+                    while (_engine.MovePossible(desiredPosition))
+                    {
+                        desiredPosition.Position.Y++;
+                    }
+                    desiredPosition.Position.Y--;
+                    _engine.currentTetromino.Position = desiredPosition.Position;
+                    if (!_engine.AddStuck()) {
+                        timer.Stop();
+                        // PauseButton.Visibility = Visibility.Hidden;
+                        System.Windows.MessageBox.Show("GAME OVER");
+                    }
+                    break;
+                case "Up": 
+                    _engine.currentTetromino.Rotate();
+                    _engine.ghostPiece.Rotate(); 
+                    break;
+            }
+                       
+        }
+        
+        private void MoveDown()
+        {
+            var desiredPosition = new Tetromino
+            {
+                Shape = _engine.currentTetromino.Shape,
+                Position = _engine.currentTetromino.Position
+            };
+            desiredPosition.Position.Y++;
+
+            
+
+            if (_engine.MovePossible(desiredPosition))
+            {
+                _engine.currentTetromino.Position = desiredPosition.Position;
+            }
+            else {
+                if(!_engine.AddStuck()) {
+                    timer.Stop();
+                    // PauseButton.Visibility = Visibility.Hidden;
+                    System.Windows.MessageBox.Show("GAME OVER");
+                }
+                _engine.SpawnTetromino();
+            }
+
+        }
+        
+        private void DrawCurrentTetromino()
+        {
+            int[,] values = _engine.currentTetromino.Shape.Value;         
+            for (int i = 0; i < values.GetLength(0); i++)
+            {
+                for (int j = 0; j < values.GetLength(1); j++)
+                {                    
+                    if (values[i, j] == 0) continue;
+                    var rectangle = new Rectangle()
+                    {
+                        Width = 25, // Breedte van een 'cell' in de Grid
+                        Height = 25, // Hoogte van een 'cell' in de Grid
+                        Stroke = Brushes.Black, // De rand
+                        StrokeThickness = 2.5, // Dikte van de rand
+                        Fill = GetColorFromCode(values[i,j]), // Achtergrondkleur
+                    };
+                    
+                    
+                    TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
+                    Grid.SetRow(rectangle, (int)(i + _engine.currentTetromino.Position.Y)); // Zet de rij
+                    Grid.SetColumn(rectangle, (int)(j + _engine.currentTetromino.Position.X)); // Zet de kolom
+                }
+            }
+            
+        }
+
+
+        private void DrawGhostPiece() 
+        {
+            
+            var desiredPosition = new Tetromino
+            {
+                Shape = _engine.currentTetromino.Shape,
+                Position = _engine.currentTetromino.Position
+            };
+            desiredPosition.Position.Y++;
+            while (_engine.MovePossible(desiredPosition))
+            {
+                desiredPosition.Position.Y++;
+            }
+            desiredPosition.Position.Y--;
+            _engine.ghostPiece.Position = desiredPosition.Position;
+            int[,] values = _engine.ghostPiece.Shape.Value;
+            for (int i = 0; i < values.GetLength(0); i++)
+            {
+                for (int j = 0; j < values.GetLength(1); j++)
+                {
+                    if (values[i, j] == 0) continue;
+                    var rectangle = new Rectangle()
+                    {
+                        Width = 25, // Breedte van een 'cell' in de Grid
+                        Height = 25, // Hoogte van een 'cell' in de Grid
+                        Stroke = Brushes.Black, // De rand
+                        StrokeThickness = 2.5, // Dikte van de rand
+                        Fill = GetColorFromCode(8), // Achtergrondkleur
+                    };
+
+
+                    TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
+                    Grid.SetRow(rectangle, (int)(i + _engine.ghostPiece.Position.Y)); // Zet de rij
+                    Grid.SetColumn(rectangle, (int)(j + _engine.currentTetromino.Position.X)); // Zet de kolom
+                }
+            }
+        }
+
+        private void DrawStuckTetrominoes()
+        {
+            foreach (var tetromino in _engine.stuckTetrominoes)
+            {
+                int[,] values = tetromino.Shape.Value;
+                for (int i = 0; i < values.GetLength(0); i++)
+                {
+                    for (int j = 0; j < values.GetLength(1); j++)
+                    {
+                        
+                        if (values[i, j] == 0) continue;
+
+                        var rectangle = new Rectangle()
+                        {
+                            Width = 25, // Breedte van een 'cell' in de Grid
+                            Height = 25, // Hoogte van een 'cell' in de Grid
+                            Stroke = Brushes.Black, // De rand
+                            StrokeThickness = 2.5, // Dikte van de rand
+                            Fill = GetColorFromCode(values[i, j]), // Achtergrondkleur
+                        };
+
+                        TetrisGrid.Children.Add(rectangle); // Voeg de rectangle toe aan de Grid
+                        Grid.SetRow(rectangle, (int)(i + tetromino.Position.Y)); // Zet de rij
+                        Grid.SetColumn(rectangle, (int)(j + tetromino.Position.X)); // Zet de kolom
+                    }
                 }
             }
         }

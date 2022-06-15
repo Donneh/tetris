@@ -118,6 +118,7 @@ namespace TetrisClient
                 }
             }
         }
+
         
         private void StartGameLoop()
         {

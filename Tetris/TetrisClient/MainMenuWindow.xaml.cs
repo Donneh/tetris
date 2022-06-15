@@ -8,5 +8,21 @@ namespace TetrisClient
         {
             InitializeComponent();
         }
+
+        private void StartSinglePlayer(object sender, RoutedEventArgs e)
+        {
+            var window = new MainWindow();
+            window.Show();
+
+            this.Close();
+        }
+
+        private void StartMultiPlayer(object sender, RoutedEventArgs e)
+        {
+            var window = new MultiplayerWindow();
+            window.Show();
+
+            this.Close();
+        }
     }
 }

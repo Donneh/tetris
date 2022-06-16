@@ -39,7 +39,7 @@ namespace TetrisClient
             // Op deze manier loopt het onderstaande gelijk met de methode in TetrisHub.cs.
             _connection.On<int>("ReadyUp", seed =>
             {
-                // 
+                _engine = new TetrisEngine(seed);
             });
 
             _connection.On<List<List<int>>>("UpdateGrid", grid =>

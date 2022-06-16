@@ -19,10 +19,43 @@ namespace TetrisClient
         private Random P2Random;
 
         private TetrisEngine _engine;
+        private List<List<int>> gridWithCurrent = new();
         private DispatcherTimer timer;
-        
-        public MultiplayerWindow()
+
+        private void listTolist() 
         {
+            gridWithCurrent = new List<List<int>>();
+            foreach (var row in _engine.PlayingGrid) 
+            {
+                gridWithCurrent.Add(new(row));
+            }
+            DrawCurrentInGridWithCurrent();
+        }
+
+        private void DrawCurrentInGridWithCurrent() {
+            int[,] values = _engine.CurrentTetromino.Shape.Value;
+            for (int i = 0; i < values.GetLength(0); i++)
+            {
+                for (int j = 0; j < values.GetLength(1); j++)
+                {
+                    if (values[i, j] == 0) continue;
+                    var rectangle = new Rectangle()
+                    {
+                        Width = 25, // Breedte van een 'cell' in de Grid
+                        Height = 25, // Hoogte van een 'cell' in de Grid
+                        Stroke = Brushes.Black, // De rand
+                        StrokeThickness = 2.5, // Dikte van de rand
+                        Fill = GetColorFromCode(values[i, j]), // Achtergrondkleur
+                    };
+
+
+                    gridWithCurrent[(int)(i + _engine.CurrentTetromino.Position.Y)][(int)(j + _engine.CurrentTetromino.Position.X)] = values[i, j]; 
+                }
+            }
+        }
+
+        public MultiplayerWindow()
+        {           
             InitializeComponent();
 
             // De url waar de meegeleverde TetrisHub op draait:
@@ -81,6 +114,9 @@ namespace TetrisClient
             TetrisGrid.Focus();
         }
         
+
+        
+        
         public static Brush GetColorFromCode(int code) => code switch
         {
             0 => Brushes.Black,
@@ -101,7 +137,7 @@ namespace TetrisClient
             {
                 for (var col = 0; col < grid[row].Count; col++)
                 {
-                    if (grid[row][col] == 0) continue;
+                 //   if (grid[row][col] == 0) continue;
                     
                     var rectangle = new Rectangle()
                     {
@@ -146,7 +182,8 @@ namespace TetrisClient
 
         private async void SendBoard()
         {
-            await _connection.InvokeAsync("UpdateGrid", _engine.PlayingGrid);
+            listTolist();
+            await _connection.InvokeAsync("UpdateGrid", gridWithCurrent);
         }
 
         private void MoveObject(object sender, KeyEventArgs e)

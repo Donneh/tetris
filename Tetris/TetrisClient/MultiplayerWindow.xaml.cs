@@ -15,14 +15,16 @@ namespace TetrisClient
     public partial class MultiplayerWindow : Window
     {
         private HubConnection _connection;
-        private Random P1Random;
-        private Random P2Random;
 
         private TetrisEngine _engine;
         private List<List<int>> gridWithCurrent = new();
         private DispatcherTimer timer;
+        public bool gamePlayable = true;
 
-        private void listTolist() 
+        /// <summary>
+        /// tekent de playinggrid in een nieuwe grid. Dit is gedaan zodat presentatie en taakspecifieke logica in het board gescheuden zijn.
+        /// </summary>
+        private void ListTolist() 
         {
             gridWithCurrent = new List<List<int>>();
             foreach (var row in _engine.PlayingGrid) 
@@ -32,6 +34,9 @@ namespace TetrisClient
             DrawCurrentInGridWithCurrent();
         }
 
+        /// <summary>
+        /// tekent de currenttetromino in de nieuwe grid.
+        /// </summary>
         private void DrawCurrentInGridWithCurrent() {
             int[,] values = _engine.CurrentTetromino.Shape.Value;
             for (int i = 0; i < values.GetLength(0); i++)
@@ -100,13 +105,19 @@ namespace TetrisClient
             
             int seed = Guid.NewGuid().GetHashCode();
             
-            P1Random = new Random(seed);
+            
             
             _engine = new TetrisEngine(seed);
             StartGameLoop();
             // Het aanroepen van de TetrisHub.cs methode `ReadyUp`.
             // Hier geven we de int mee die de methode `ReadyUp` verwacht.
             await _connection.InvokeAsync("ReadyUp", seed);
+        }
+
+        private async void SendBoard()
+        {
+            ListTolist();
+            await _connection.InvokeAsync("UpdateGrid", gridWithCurrent);
         }
 
         private void OnGridLoaded(object sender, RoutedEventArgs e)
@@ -180,11 +191,7 @@ namespace TetrisClient
             SendBoard();
         }
 
-        private async void SendBoard()
-        {
-            listTolist();
-            await _connection.InvokeAsync("UpdateGrid", gridWithCurrent);
-        }
+        
 
         private void MoveObject(object sender, KeyEventArgs e)
         {

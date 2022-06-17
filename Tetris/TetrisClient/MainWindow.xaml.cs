@@ -16,7 +16,11 @@ namespace TetrisClient
     {
         private readonly TetrisEngine engine;
         private DispatcherTimer timer;
+        private Boolean gamePlayable = true;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -28,7 +32,9 @@ namespace TetrisClient
         private void OnGridLoaded(object sender, EventArgs e) {
             TetrisGrid.Focus();
         }
-
+        /// <summary>
+        /// Het aanmaken van een gameloop met dropspeed en een dispatchertimer
+        /// </summary>
         private void StartGameLoop()
         {
             timer = new DispatcherTimer();
@@ -37,6 +43,11 @@ namespace TetrisClient
             timer.Start();
         }
 
+        /// <summary>
+        /// Een Gametick die elke keer wanneer deze getriggered wordt wat functies uitvoert.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void GameTick(object sender, EventArgs e)
         {
             TetrisGrid.Children.Clear(); 
@@ -51,63 +62,75 @@ namespace TetrisClient
             }
         }
         
+        /// <summary>
+        /// Dit is de functie die kijkt welke kant de tetromino heen gaat door de input van de user.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MoveObject(object sender, KeyEventArgs e)
-        {            
-            
-            switch (e.Key.ToString()) {
-                case "Right":
-                    DrawGhostPiece();
-                    var desiredPosition = new Tetromino
-                    {
-                        Shape = engine.CurrentTetromino.Shape,
-                        Position = engine.CurrentTetromino.Position
-                    };
-                    desiredPosition.Position.X++;
-                    if (engine.SideMovePossible(desiredPosition))
-                    {
-                        engine.CurrentTetromino.Position = desiredPosition.Position;
-                    }
-                    break;
-                case "Left":
-                    DrawGhostPiece();
-                    desiredPosition = new Tetromino
-                    {
-                        Shape = engine.CurrentTetromino.Shape,
-                        Position = engine.CurrentTetromino.Position
-                    };
-                    desiredPosition.Position.X--;
-                    if (engine.SideMovePossible(desiredPosition))
-                    {
-                        engine.CurrentTetromino.Position = desiredPosition.Position;
-                    }
-                    break;
-                case "Down":
-                    desiredPosition = new Tetromino
-                    {
-                        Shape = engine.CurrentTetromino.Shape,
-                        Position = engine.CurrentTetromino.Position
-                    };
-                    desiredPosition.Position.Y++;
-                    while (engine.MovePossible(desiredPosition))
-                    {
+        {
+            if (gamePlayable)
+            {
+                switch (e.Key.ToString())
+                {
+                    case "Right":
+                        DrawGhostPiece();
+                        var desiredPosition = new Tetromino
+                        {
+                            Shape = engine.CurrentTetromino.Shape,
+                            Position = engine.CurrentTetromino.Position
+                        };
+                        desiredPosition.Position.X++;
+                        if (engine.SideMovePossible(desiredPosition))
+                        {
+                            engine.CurrentTetromino.Position = desiredPosition.Position;
+                        }
+                        break;
+                    case "Left":
+                        DrawGhostPiece();
+                        desiredPosition = new Tetromino
+                        {
+                            Shape = engine.CurrentTetromino.Shape,
+                            Position = engine.CurrentTetromino.Position
+                        };
+                        desiredPosition.Position.X--;
+                        if (engine.SideMovePossible(desiredPosition))
+                        {
+                            engine.CurrentTetromino.Position = desiredPosition.Position;
+                        }
+                        break;
+                    case "Down":
+                        desiredPosition = new Tetromino
+                        {
+                            Shape = engine.CurrentTetromino.Shape,
+                            Position = engine.CurrentTetromino.Position
+                        };
                         desiredPosition.Position.Y++;
-                    }
-                    desiredPosition.Position.Y--;
-                    engine.CurrentTetromino.Position = desiredPosition.Position;
-                    if (!engine.AddStuck()) {
-                        timer.Stop();
-                        PauseButton.Visibility = Visibility.Hidden;
-                        System.Windows.MessageBox.Show("GAME OVER");
-                    }
-                    break;
-                case "Up": 
-                    engine.CurrentTetromino.Rotate();
-                    engine.GhostPiece.Rotate(); 
-                    break;
+                        while (engine.MovePossible(desiredPosition))
+                        {
+                            desiredPosition.Position.Y++;
+                        }
+                        desiredPosition.Position.Y--;
+                        engine.CurrentTetromino.Position = desiredPosition.Position;
+                        if (!engine.AddStuck())
+                        {
+                            timer.Stop();
+                            PauseButton.Visibility = Visibility.Hidden;
+                            System.Windows.MessageBox.Show("GAME OVER");
+                        }
+                        break;
+                    case "Up":
+                        engine.CurrentTetromino.Rotate();
+                        engine.GhostPiece.Rotate();
+                        break;
+                }
             }
                        
         }
 
+        /// <summary>
+        /// Beweegt de tetromino naar beneden
+        /// </summary>
         private void MoveDown()
         {
             var desiredPosition = new Tetromino
@@ -131,6 +154,12 @@ namespace TetrisClient
             }
         }
 
+        /// <summary>
+        /// Maakt de tetromino op het board een kleur dmv het cijfer wat de tetromino heeft.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static Brush GetColorFromCode(int code) => code switch
         {
             0 => Brushes.Black,
@@ -145,6 +174,10 @@ namespace TetrisClient
             _ => throw new ArgumentOutOfRangeException(nameof(code), $"Not expected code: {code}")
         };
 
+
+        /// <summary>
+        /// tekent de huidige tetromino in het board
+        /// </summary>
         private void DrawCurrentTetromino()
         {
             int[,] values = engine.CurrentTetromino.Shape.Value;         
@@ -171,7 +204,9 @@ namespace TetrisClient
             
         }
 
-
+        /// <summary>
+        /// tekent de ghostpiece in het board
+        /// </summary>
         private void DrawGhostPiece() 
         {
             
@@ -210,6 +245,9 @@ namespace TetrisClient
             }
         }
 
+        /// <summary>
+        /// tekent de stuck tetrominos in het board
+        /// </summary>
         private void DrawStuckTetrominoes()
         {
             foreach (var tetromino in engine.StuckTetrominoes)
@@ -239,16 +277,22 @@ namespace TetrisClient
             }
         }
 
-
+        /// <summary>
+        /// functie die de pauzeknop regelt.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PauseClick(object sender, RoutedEventArgs e)
         {
             
             timer.IsEnabled = !timer.IsEnabled;
+            gamePlayable = !gamePlayable;
             if (PauseButton.Content.Equals("Pause"))
             {
                 PauseButton.Content = "Play";
             }
             else {
+                
                 PauseButton.Content = "Pause";
             }
         }

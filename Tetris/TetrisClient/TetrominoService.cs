@@ -6,6 +6,10 @@ namespace TetrisClient
     {
         private readonly Random random;
 
+        /// <summary>
+        /// aanmaken van alle soorten shapes van tetrominos
+        /// </summary>
+        /// <returns></returns>
         private int[,] LShape()
         {
             return new int[,]
@@ -78,11 +82,19 @@ namespace TetrisClient
 
         }
 
+        /// <summary>
+        /// maakt een random nav de seed
+        /// </summary>
+        /// <param name="seed"></param>
         public TetrominoService(int seed)
         {
             random = new Random(seed);
         }
 
+        /// <summary>
+        /// geeft een randomtetromino
+        /// </summary>
+        /// <returns></returns>
         public Tetromino GetRandomTetromino()
         {
             var randomInt = random.Next(0, 7);
@@ -93,6 +105,12 @@ namespace TetrisClient
             };
         }
 
+        /// <summary>
+        /// geeft een vorm van een tetromino aan de vorige functie.
+        /// </summary>
+        /// <param name="number"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         private Matrix GetRandomBLock(int number) => number switch
         {
             0 => new Matrix(LShape()),

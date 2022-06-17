@@ -6,10 +6,10 @@
         xmlns:local="clr-namespace:TetrisClient"
         mc:Ignorable="d"
         Title="MainMenuWindow" Height="450" Width="800">
-    <Grid>
-        <Button x:Name="SinglePlayerButton" Content="Single Player" HorizontalAlignment="Left" Margin="250,178,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.301,0.628" Height="48" Width="97" Click="StartSinglePlayer"/>
+    <Grid Background="Gray">
+        <Button x:Name="SinglePlayerButton" Foreground="#FFFFF161" Background="Black" FontFamily="Showcard Gothic" Content="Single Player" HorizontalAlignment="Left" Margin="236,188,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.301,0.628" Height="67" Width="122" Click="StartSinglePlayer"/>
 
-        <Button x:Name="MultiPlayerButton" Content="MultiPlayer" HorizontalAlignment="Left" Margin="350,178,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.301,0.628" Height="48" Width="97" Click="StartMultiPlayer" />
+        <Button x:Name="MultiPlayerButton"  Foreground="#FFFFF161" Background="black" FontFamily="Showcard Gothic" Content="MultiPlayer" HorizontalAlignment="Left" Margin="400,188,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.301,0.628" Height="67" Width="127" Click="StartMultiPlayer" />
 
     </Grid>
 </Window>

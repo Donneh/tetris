@@ -18,17 +18,21 @@ namespace TetrisClient
         private int clearedLines;
         public int Level = 1;
         public bool LevelChanged;
+        
 
+        /// <summary>
+        /// Dit is de constructor van TetrisEngine.
+        /// Het geeft een seed mee aan de TetrominoService(die vervolgens een RandomTetromino eruit spawnt).
+        /// Daarnaast wordt er een randomcurrenttetromino aangemaakt.
+        /// Ook wordt er een ghostpiece aangemaakt.
+        /// Verder wordt het board ook de goede grootte gemaakt.
+        /// </summary>
+        /// <param name="seed"></param>
         public TetrisEngine(int seed)
         {
             tetrominoService = new TetrominoService(seed);
             CurrentTetromino = tetrominoService.GetRandomTetromino();
-            GhostPiece = new Tetromino
-            {
-                Shape = new Matrix(CurrentTetromino.Shape.Value),
-                Position = new Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y + 18),
-                Color = Brushes.Gray
-            };
+            CreateGhostPiece();
             
             for (var i = 0; i < 20; i++)
             {
@@ -36,28 +40,39 @@ namespace TetrisClient
             }
         }
 
+        /// <summary>
+        /// Cleared de lines.
+        /// Maakt een nieuwe tetromino aan voor current.
+        /// creeert een ghostpiece
+        /// </summary>
+
         public void SpawnTetromino()
         {
             ClearLines();
             CurrentTetromino = tetrominoService.GetRandomTetromino();
+            CreateGhostPiece();
+        }
+
+        /// <summary>
+        /// Maakt een Ghosttetromino aan die variables heeft van currenttetromino
+        /// </summary>
+        public void CreateGhostPiece() {
             GhostPiece = new Tetromino
             {
                 Shape = new Matrix(CurrentTetromino.Shape.Value),
-                Position = new Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y + 3),
-                Color = CurrentTetromino.Color
+                Position = new Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y + 18),
+                Color = Brushes.Gray
             };
         }
 
+        /// <summary>
+        /// Voegt de currentTetromino toe aan de playingGrid 
+        /// </summary>
+        /// <returns>true als ie toegevoegd kan worden. Anders false</returns>
         public bool AddStuck()
-        {
-            var tet = new Tetromino
-            {
-                Shape = new Matrix(CurrentTetromino.Shape.Value),
-                Position = new Vector2(CurrentTetromino.Position.X, CurrentTetromino.Position.Y),
-                Color = CurrentTetromino.Color
-            };
-            StuckTetrominoes.Add(tet);
-            var shape = tet.Shape.Value;
+        {          
+            StuckTetrominoes.Add(CurrentTetromino);
+            var shape = CurrentTetromino.Shape.Value;
 
             for (var yOffset = 0; yOffset < shape.GetLength(0); yOffset++)
             {
@@ -70,12 +85,10 @@ namespace TetrisClient
 
                     var newYPos = (int) CurrentTetromino.Position.Y + yOffset;
                     var newXPos = (int) CurrentTetromino.Position.X + xOffset;
-                    //Debug.WriteLine(newYPos);
+                    
                     if (newYPos > 0)
-                    {
-                        //prettyprint();
-                        PlayingGrid[newYPos][newXPos] = shape[yOffset, xOffset];
-                        //prettyprint();
+                    {                       
+                        PlayingGrid[newYPos][newXPos] = shape[yOffset, xOffset];                        
                     }
                     else
                     {
@@ -87,6 +100,11 @@ namespace TetrisClient
             return true;
         }
 
+        /// <summary>
+        /// Zet een tetromino neer met een desired position (de positie waar de tetromino heen wilt) en kijkt of die move mogelijk is.
+        /// </summary>
+        /// <param name="desiredPosition"></param>
+        /// <returns>true als move mogelijk is. Anders false</returns>
 
         public bool MovePossible(Tetromino desiredPosition)
         {
@@ -127,6 +145,12 @@ namespace TetrisClient
             return true;
         }
 
+        /// <summary>
+        /// Doet hetzelfde als movepossible, maar checkt dan op side moves
+        /// </summary>
+        /// <param name="desiredPosition"></param>
+        /// <returns>returnt true als de move mag. Anders returnt het false;</returns>
+
         public bool SideMovePossible(Tetromino desiredPosition)
         {
             var shape = desiredPosition.Shape.Value;
@@ -163,6 +187,9 @@ namespace TetrisClient
             return true;
         }
 
+        /// <summary>
+        /// Leegt volle regels en zet ze aan de bovenkant van de lijst. Vervolgens triggered het de setdropspeed functie.
+        /// </summary>
         private void ClearLines()
         {
             var rowsToReplace = new List<List<int>>();
@@ -170,21 +197,21 @@ namespace TetrisClient
             {
                 var row = PlayingGrid[rowIndex];
 
-                // check if row is full
+                // check of rij vol is
                 if (!row.Contains(0))
                 {
-                    // reset row (no need to recreate row)
+                    // reset rij
                     for (var columnIndex = 0; columnIndex < row.Count; columnIndex++)
                     {
                         row[columnIndex] = 0;
                     }
 
-                    // add row to list
+                    // voegt rij toe aan lijst
                     rowsToReplace.Add(row);
                 }
             }
 
-            // process full rows - delete it from current position and insert on top
+            // process volle rijen en delete die van de huidige positie van de lijst en zet ze aan top
             foreach (var row in rowsToReplace)
             {
                 clearedLines++;
@@ -200,6 +227,10 @@ namespace TetrisClient
             SetDropspeed(clearedLines);
         }
 
+        /// <summary>
+        /// kijkt hoe veel rijen er al geleegd zijn en zet op basis daarvan de levels en de dropspeed
+        /// </summary>
+        /// <param name="clearedLines"></param>
 
         public void SetDropspeed(int clearedLines)
         {
@@ -209,11 +240,12 @@ namespace TetrisClient
                 LevelChanged = true;
                 Level = (clearedLines / 5) + 1;
                 DropSpeed = Math.Pow(0.8 - ((Level - 1) * 0.007), (Level - 1));
-                Debug.WriteLine(DropSpeed);
             }
         }
 
-
+        /// <summary>
+        /// Dit is de functie die gedaan wordt na de clear lines methode. Deze tekent de playinggrid volledig in de stucktetrominos door het board op te delen in tetrominos.
+        /// </summary>
         public void RemoveTetrominoPart()
         {
             List<Tetromino> tetrominos = new();
@@ -226,7 +258,7 @@ namespace TetrisClient
                 rowIndex = 0;
                 for (var i = 0; i < 5; i++)
                 {
-                    //for (var y = 0; y < 4; y++) {
+                    // eerste 2x4
                     tetrominos.Add(new Tetromino
                     {
                         Shape = new Matrix(new int[,]
@@ -252,8 +284,7 @@ namespace TetrisClient
                         Position = new System.Numerics.Vector2(ColIndex, rowIndex)
                     });
                     ;
-                    rowIndex += 4;
-                    //}
+                    rowIndex += 4;                 
                 }
 
                 ColIndex += 4;
@@ -261,7 +292,7 @@ namespace TetrisClient
 
             rowIndex = 0;
             ColIndex = 8;
-
+            //laatste 2
             for (var i = 0; i < 10; i++)
             {
                 tetrominos.Add(new Tetromino
@@ -283,17 +314,6 @@ namespace TetrisClient
             StuckTetrominoes = tetrominos;
         }
 
-        public void prettyprint()
-        {
-            for (int i = 0; i < PlayingGrid.Count; i++)
-            {
-                for (int j = 0; j < PlayingGrid[0].Count; j++)
-                {
-                    Debug.Write(string.Format("{0} ", PlayingGrid[i][j]));
-                }
-
-                Debug.Write(Environment.NewLine + Environment.NewLine);
-            }
-        }
+        
     }
 }

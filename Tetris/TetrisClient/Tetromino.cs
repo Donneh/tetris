@@ -5,6 +5,9 @@ using System.Windows.Shapes;
 
 namespace TetrisClient
 {
+    /// <summary>
+/// klasse die tetromino vorm aanmaakt en roteert.
+/// </summary>
     public class Tetromino
     {
         

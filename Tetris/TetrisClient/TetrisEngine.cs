@@ -7,6 +7,9 @@ using System.Windows.Media;
 
 namespace TetrisClient
 {
+    //Wij hebben alleen gebruik gemaakt van linq bij Enum.repeat aangezien wij nergens anders iets moesten selecteren en dan filteren.
+    //Dit zou ervoor zorgen dat wij ergens in de code konden kijken of linq te gebruiken is, maar dit maakt naar ons mening de code onoverzichtelijk en daarnaast was het dan linq gebruiken voor het gebruik zodat we punten krijgen, terwijl dit ook (al is het slechts een heel klein beetje) zorgt voor minder snelheid naast naar onze mening onduidelijkheid. 
+
     public class TetrisEngine
     {
         private readonly TetrominoService tetrominoService;
